@@ -20,10 +20,10 @@ function list(val) {
 program
     .version(version)
     .usage('[options] [dir]')
-    .option('-i, --init', 'create configs')
+    .option('-i, --init', 'create config')
     .option('-a, --adapter', 'database adapter (mysql|redis|etc...)')
-    .option('-g, --generate <modelname>', 'generate data model')
-    .option('-p, --prefix [prefixname]', 'change uri prefix, defaults is "api"', 'api')
+    .option('-m, --model <modelname>', 'generate data model')
+    .option('-c, --controller <ctrname>', 'generate data controller')
     .option('-f, --force', 'force on non-empty directory')
     .parse(process.argv);
 
@@ -35,19 +35,18 @@ var destination_path = './';
 
 var eol = os.EOL;
 
-// Template engine
-
+// Adapter
 if (!program.adapter) {
     program.adapter = 'sqlite3';
 }
 
-if (!program.init && !program.generate && !program.server) {
+if (!program.init && !program.model && !program.server) {
     program.help();
 } else if (program.init) {
     checkIsProject(destination_path);
     createApplication(destination_path);
-} else if (program.generate) {
-    program.generate = program.generate.toLowerCase().singularize();
+} else if (program.model) {
+    program.model = program.model.toLowerCase().singularize();
     destination_path += 'models';
     createModel(destination_path);
 }
@@ -55,13 +54,11 @@ if (!program.init && !program.generate && !program.server) {
 function load_template(name) {
     return fs.readFileSync(path.join(__dirname, '..', 'templates', name), 'utf-8');
 }
-/*
- var index = load_template('js/routes/index.js');
- var rest = load_template('js/routes/rest.js');
- */
+
+var ctr = fs.readFileSync(__dirname + '/../templates/controllers/controller.js', 'utf-8');
 var cfg = fs.readFileSync(__dirname + '/../templates/database.js', 'utf-8');
 
-// Generate application
+// Create structure
 function createApplication(dstpath) {
     emptyDirectory(dstpath, function (empty) {
         if (empty || program.force) {
@@ -81,21 +78,26 @@ function createApplication(dstpath) {
 
 // Generate Model
 function createModel(root) {
-    var modelName = program.generate.toLowerCase().capitalize();
+    var modelName = program.model.toLowerCase().capitalize();
     var pathToModel = path.resolve(root + '/' + modelName + '.js');
     existsFile(pathToModel, function (empty) {
-        if (!empty || program.force) {
-            createModelAt(root, modelName);
-        } else {
-            confirm('model is exists, continue? [y/N] ', function (ok) {
-                if (ok) {
-                    process.stdin.destroy();
-                    createModelAt(root, modelName);
-                } else {
-                    abort('aborting');
-                }
-            });
-        }
+        existsFile(root + '/../database.js', function (exists) {
+            if (!exists) {
+                write(root + '/../database.js', cfg, 0755);
+            }
+            if (!empty || program.force) {
+                createModelAt(root, modelName);
+            } else {
+                confirm('model is exists, continue? [y/N] ', function (ok) {
+                    if (ok) {
+                        process.stdin.destroy();
+                        createModelAt(root, modelName);
+                    } else {
+                        abort('aborting');
+                    }
+                });
+            }
+        });
     });
 }
 
@@ -120,7 +122,6 @@ function createModelAt(pathToModels, modelName) {
 function parseFields() {
     var fields = [];
     for (var i in process.argv) {
-        // Skip the first two - Node and app.js path
         if (i > 3) {
             var fdata = process.argv[i].split(':');
             var field = '';
@@ -152,6 +153,9 @@ function parseFields() {
                     case 'json':
                         type = 'type : schema.Json';
                         break;
+                    case 'date':
+                        type = 'type : schema.Date';
+                        break;
                     default:
                         type = 'type : schema.String';
                 }
@@ -174,13 +178,13 @@ function parseFields() {
  * @param {String} path
  */
 function createApplicationAt(dstpath) {
-    /*
-     process.on('exit', function () {
-     console.log();
-     console.log('   run the app:');
-     console.log();
-     });
-     */
+
+    process.on('exit', function () {
+        console.log();
+        console.log('complete');
+        console.log();
+    });
+
     var pkgFile = fs.readFileSync(dstpath + 'package.json');
     var pkgProject = JSON.parse(pkgFile);
 
@@ -206,6 +210,10 @@ function createApplicationAt(dstpath) {
 
         if (!pkgProject.dependencies[program.adapter]) {
             pkgProject.dependencies[program.adapter] = 'latest'
+        }
+
+        if (!pkgProject.dependencies['underscore']) {
+            pkgProject.dependencies['underscore'] = 'latest'
         }
 
         write(dstpath + 'package.json', JSON.stringify(pkgProject, null, 4));

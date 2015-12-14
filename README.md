@@ -32,37 +32,32 @@
 
 ## Quick Start
 
- The quickest way to get started with caminte is to utilize the executable `caminte(1)` to generate an application as shown below:
-
+ The quickest way to get started with caminte is to utilize the executable `caminte(1)` to create an application as shown below:
 
  Install dependencies:
 
     $ npm install
 
- Edit `./config/index.js` file, to configure the connection to the database server.
+ Edit `./app.js` file, to configure the connection to the database server.
 
  Create model:
 
-    $ caminte -g User name email password desciption:text created:date
+    $ caminte -m User active:int name email password note:text created:date
 
 
 ### Usage
 
-    $ caminte [options] [dir]
+    $ caminte [options] [name]
 
 ### Options
 
     -h, --help                  output usage information
     -V, --version               output the version number
-    -i, --init <appname>        create caminte sctructure
-    -g, --generate <modelname>  generate data model
+    -i, --iinit                 create caminte sctructure
+    -g, --model <modelname>     generate data model
     -a, --adapter               database adapter (mysql|redis|etc...)
     -f, --force                 force on non-empty directory
 
-### Examples
-
-    # create model
-    $ caminte -g Post active:bool name:string desc:text created:date
 
 ### Routes
 
@@ -81,26 +76,14 @@ will provide the following routes:
 On initialization directories tree generated, like that:
 
     .
-    |-- bin
-    |   `-- www
-    |-- config
-    |   `-- index.js
-    |-- lib
-    |   |-- inflection.js
-    |   |-- tools.js
-    |   `-- xml.js
+    | 
     |-- models
-    |   `-- User.js
-    |-- public
-    |   |-- css
-    |   |   `-- ...
-    |   |-- js
-    |   |   `-- ...
-    |   `-- img
+    |   |-- User.js
+    |   `-- ...
+    |-- routes
+    |   `-- users.js
     |       `-- ...
-    |-- app.js
-    `-- package.json
-
+    `-- database.js
 
 
 ### Recommend extensions
@@ -138,6 +121,6 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 - Visit the [author website](http://www.gordejev.lv).
 - Follow [@biggora](https://twitter.com/#!/biggora) on Twitter for updates.
-- Report issues on the [github issues](https://github.com/biggora/caminte-generator/issues) page.
+- Report issues on the [github issues](https://github.com/biggora/caminte-cli/issues) page.
 
-[![Analytics](https://ga-beacon.appspot.com/UA-22788134-5/caminte-generator/readme)](https://github.com/igrigorik/ga-beacon) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/biggora/caminte-generator/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+[![Analytics](https://ga-beacon.appspot.com/UA-22788134-5/caminte-cli/readme)](https://github.com/igrigorik/ga-beacon) [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/biggora/caminte-cli/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
