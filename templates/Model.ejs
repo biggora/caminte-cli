@@ -1,5 +1,5 @@
 /**
- *  {name} schema
+ *  <%- modelName %> schema
  *
  *  Created by create model script
  *  App based on CaminteJS
@@ -7,13 +7,13 @@
  **/
 
 /**
- *  Define {name} Model
+ *  Define <%- modelName %> Model
  *  @param {Object} schema
  *  @return {Object}
  **/
 module.exports = function(schema){
-    var {name} = schema.define('{nameToLowerCase}', {
-{fields}
+    var <%- modelName %> = schema.define('<%- tableName %>', {
+<%- fields %>
     });
-    return {name};
+    return <%- modelName %>;
 };

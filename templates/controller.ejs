@@ -1,21 +1,23 @@
 /**
- *  <?= controllerName ?> Routes
+ *  <%- controllerName %> Routes
  *
  *  Created by create model script
  *  App based on CaminteJS
  *  CaminteJS homepage http://www.camintejs.com
  **/
+var express = require('express');
+var router = express.Router();
 
-module.exports = {
-    /**
-     * Index action, returns a list either
-     * Default mapping to GET '/:table'
-     *
-     * @param {Object} req
-     * @param {Object} res
-     * @param {Function} next
-     **/
-    'index': function (req, res) {
+/**
+* Index action, returns a list either
+* Default mapping to GET '/<%- itemsName %>'
+*
+* @param {Object} req
+* @param {Object} res
+* @param {Function} next
+**/
+router.get('/', function (req, res) {
+        var <%- modelName %> = req.app.models.<%- modelName %>;
         var query = req.query;
         var skip = query.skip ? parseInt(query.skip) - 1 : 0;
         var limit = query.limit ? parseInt(query.limit) : 20;
@@ -27,9 +29,9 @@ module.exports = {
             where: {}
         };
 
-        Model.count(opts.where, function (err, count) {
+        <%- modelName %>.count(opts.where, function (err, count) {
             total = count;
-            Model.all(opts, function (err, users) {
+            <%- modelName %>.all(opts, function (err, <%- itemsName %>) {
                 if (err) {
                     res.status(400);
                     return res.json({
@@ -38,20 +40,22 @@ module.exports = {
                     });
                 }
                 res.status(200);
-                res.json(users);
+                res.json(<%- itemsName %>);
             });
         });
-    },
-    /**
-     * Show action, returns shows a single item
-     * Default mapping to GET '/:table/:id'
-     *
-     * @param {Object} req
-     * @param {Object} res
-     * @param {Function} next
-     **/
-    'show': function (req, res) {
-        Model.findById(req.params.id, function (err, item) {
+});
+
+/**
+* Show action, returns shows a single <%- itemName %>
+* Default mapping to GET '/<%- itemsName %>/:id'
+*
+* @param {Object} req
+* @param {Object} res
+* @param {Function} next
+**/
+router.get('/:id', function (req, res) {
+        var <%- modelName %> = req.app.models.<%- modelName %>;
+        <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
             if (err) {
                 res.status(400);
                 return res.json({
@@ -59,11 +63,11 @@ module.exports = {
                     error: err
                 });
             }
-            if (item) {
+            if (<%- itemName %>) {
                 res.status(200);
                 res.json({
                     status: 200,
-                    data: item.toObject()
+                    data: <%- itemName %>.toObject()
                 });
             } else {
                 res.status(404);
@@ -73,17 +77,19 @@ module.exports = {
                 });
             }
         });
-    },
-    /**
-     * Update action, updates a single item
-     * Default mapping to PUT '/:table/:id', no GET mapping
-     *
-     * @param {Object} req
-     * @param {Object} res
-     * @param {Function} next
-     **/
-    'update': function (req, res) {
-        Model.findById(req.params.id, function (err, item) {
+});
+
+/**
+* Update action, updates a single <%- itemName %>
+* Default mapping to PUT '/<%- itemsName %>/:id', no GET mapping
+*
+* @param {Object} req
+* @param {Object} res
+* @param {Function} next
+**/
+router.put('/:id', function (req, res) {
+        var <%- modelName %> = req.app.models.<%- modelName %>;
+        <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
             if (err) {
                 res.status(400);
                 return res.json({
@@ -91,8 +97,8 @@ module.exports = {
                     error: err
                 });
             }
-            if (item) {
-                item.updateAttributes(filtered, function (err) {
+            if (<%- itemName %>) {
+                <%- itemName %>.updateAttributes(filtered, function (err) {
                     if (err) {
                         res.status(400);
                         return res.json({
@@ -103,7 +109,7 @@ module.exports = {
                     res.status(200);
                     res.json({
                         status: 200,
-                        data: item.toObject()
+                        data: <%- itemName %>.toObject()
                     });
                 });
 
@@ -115,27 +121,29 @@ module.exports = {
                 });
             }
         });
-    },
-    /**
-     * Create action, creates a single item
-     * Default mapping to POST '/:table', no GET mapping
-     *
-     * @param {Object} req
-     * @param {Object} res
-     * @param {Function} next
-     **/
-    'create': function (req, res) {
-        var item = new Model(filtered);
-        item.isValid(function (isValid) {
+});
+
+/**
+* Create action, creates a single <%- itemName %>
+* Default mapping to POST '/<%- itemsName %>', no GET mapping
+*
+* @param {Object} req
+* @param {Object} res
+* @param {Function} next
+**/
+router.post('/', function (req, res) {
+        var <%- modelName %> = req.app.models.<%- modelName %>;
+        var <%- itemName %> = new <%- modelName %>(filtered);
+        <%- itemName %>.isValid(function (isValid) {
             if (!isValid) {
                 res.status(400);
                 return res.json({
                     status: 400,
-                    error: item.errors
+                    error: <%- itemName %>.errors
                 });
             }
 
-            item.save(function (err) {
+            <%- itemName %>.save(function (err) {
                 if (err) {
                     res.status(400);
                     return res.json({
@@ -146,21 +154,23 @@ module.exports = {
                 res.status(201);
                 res.json({
                     status: 201,
-                    data: item.toObject()
+                    data: <%- itemName %>.toObject()
                 });
             });
         });
-    },
-    /**
-     * Delete action, deletes a single item
-     * Default mapping to DEL '/:table/:id', no GET mapping
-     *
-     * @param {Object} req
-     * @param {Object} res
-     * @param {Function} next
-     **/
-    'destroy': function (req, res) {
-        Model.findById(req.params.id, function (err, item) {
+});
+
+/**
+* Delete action, deletes a single <%- itemName %>
+* Default mapping to DEL '/<%- itemsName %>/:id', no GET mapping
+*
+* @param {Object} req
+* @param {Object} res
+* @param {Function} next
+**/
+router.delete('/:id', function (req, res) {
+        var <%- modelName %> = req.app.models.<%- modelName %>;
+        <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
             if (err) {
                 res.status(400);
                 return res.json({
@@ -168,7 +178,7 @@ module.exports = {
                     error: err
                 });
             }
-            item.destroy(function (err) {
+            <%- itemName %>.destroy(function (err) {
                 if (err) {
                     res.status(400);
                     return res.json({
@@ -184,17 +194,19 @@ module.exports = {
                 }
             });
         });
-    },
-    /**
-     * Delete action, deletes a all items
-     * Default mapping to DEL '/:table', no GET mapping
-     *
-     * @param {Object} req
-     * @param {Object} res
-     * @param {Function} next
-     **/
-    'destroyall': function (req, res) {
-        Model.destroyAll(function (err) {
+});
+
+/**
+* Delete action, deletes a all <%- itemName %>s
+* Default mapping to DEL '/<%- itemsName %>', no GET mapping
+*
+* @param {Object} req
+* @param {Object} res
+* @param {Function} next
+**/
+router.delete('/all', function (req, res) {
+        var <%- modelName %> = req.app.models.<%- modelName %>;
+        <%- modelName %>.destroyAll(function (err) {
             if (err) {
                 res.status(400);
                 return res.json({
@@ -205,9 +217,11 @@ module.exports = {
                 res.status(204);
                 res.json({
                     status: 204,
-                    message: 'Items deleted'
+                    message: '<%- itemsName %> deleted'
                 });
             }
         });
     }
-};
+});
+
+module.exports = router;

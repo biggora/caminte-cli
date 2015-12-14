@@ -3,6 +3,7 @@
 var program = require('commander');
 var readline = require('readline');
 var mkdirp = require('mkdirp');
+var _ = require('underscore');
 var os = require('os');
 var fs = require('fs');
 var path = require('path');
@@ -23,7 +24,8 @@ program
     .option('-i, --init', 'create config')
     .option('-a, --adapter', 'database adapter (mysql|redis|etc...)')
     .option('-m, --model <modelname>', 'generate data model')
-    .option('-c, --controller <ctrname>', 'generate data controller')
+    .option('-r, --route <routename>', 'generate data routes')
+    .option('-c, --crud <crudname>', 'generate data crud')
     .option('-f, --force', 'force on non-empty directory')
     .parse(process.argv);
 
@@ -40,23 +42,45 @@ if (!program.adapter) {
     program.adapter = 'sqlite3';
 }
 
-if (!program.init && !program.model && !program.server) {
+if (!program.init && !program.model && !program.route && !program.crud) {
     program.help();
-} else if (program.init) {
+}
+
+if (program.init) {
     checkIsProject(destination_path);
     createApplication(destination_path);
-} else if (program.model) {
+}
+
+if (program.model) {
     program.model = program.model.toLowerCase().singularize();
     destination_path += 'models';
     createModel(destination_path);
+}
+
+if (program.route) {
+    program.route = program.route.toLowerCase().pluralize();
+    destination_path += 'routes';
+    createRoute(destination_path);
+}
+
+if (program.crud) {
+    program.crud = program.crud.toLowerCase().pluralize();
+    createRoute(destination_path + 'routes', function () {
+        createModel(destination_path + 'models');
+    });
 }
 
 function load_template(name) {
     return fs.readFileSync(path.join(__dirname, '..', 'templates', name), 'utf-8');
 }
 
-var ctr = fs.readFileSync(__dirname + '/../templates/controllers/controller.js', 'utf-8');
+var ctr = fs.readFileSync(__dirname + '/../templates/controller.ejs', 'utf-8');
+var mdl = fs.readFileSync(__dirname + '/../templates/model.ejs', 'utf-8');
 var cfg = fs.readFileSync(__dirname + '/../templates/database.js', 'utf-8');
+
+var ctrTemplate = _.template(ctr);
+var modelTemplate = _.template(mdl);
+var cfgTemplate = _.template(cfg);
 
 // Create structure
 function createApplication(dstpath) {
@@ -66,7 +90,6 @@ function createApplication(dstpath) {
         } else {
             confirm('destination is not empty, continue? [y/N] ', function (ok) {
                 if (ok) {
-                    process.stdin.destroy();
                     createApplicationAt(dstpath);
                 } else {
                     abort('aborting');
@@ -77,27 +100,44 @@ function createApplication(dstpath) {
 }
 
 // Generate Model
-function createModel(root) {
-    var modelName = program.model.toLowerCase().capitalize();
+function createModel(root, cb) {
+    var modelName = (program.model || program.crud).toLowerCase().singularize().capitalize();
     var pathToModel = path.resolve(root + '/' + modelName + '.js');
     existsFile(pathToModel, function (empty) {
-        existsFile(root + '/../database.js', function (exists) {
-            if (!exists) {
-                write(root + '/../database.js', cfg, 0755);
-            }
-            if (!empty || program.force) {
-                createModelAt(root, modelName);
-            } else {
-                confirm('model is exists, continue? [y/N] ', function (ok) {
-                    if (ok) {
-                        process.stdin.destroy();
-                        createModelAt(root, modelName);
-                    } else {
-                        abort('aborting');
-                    }
-                });
-            }
-        });
+        if (!empty || program.force) {
+            createModelAt(root, modelName);
+            return cb && cb();
+        } else {
+            confirm('model is exists, continue? [y/N] ', function (ok) {
+                if (ok) {
+                    createModelAt(root, modelName);
+                    return cb && cb();
+                } else {
+                    abort('aborting');
+                }
+            });
+        }
+    });
+}
+
+// Generate Route
+function createRoute(root, cb) {
+    var ctrName = (program.route || program.crud).toLowerCase().pluralize();
+    var pathToCtr = path.resolve(root + '/' + ctrName + '.js');
+    existsFile(pathToCtr, function (empty) {
+        if (!empty || program.force) {
+            createCtrAt(root, ctrName);
+            return cb && cb();
+        } else {
+            confirm('routes is exists, continue? [y/N] ', function (ok) {
+                if (ok) {
+                    createCtrAt(root, ctrName);
+                    return cb && cb();
+                } else {
+                    abort('aborting');
+                }
+            });
+        }
     });
 }
 
@@ -110,12 +150,31 @@ function createModel(root) {
 function createModelAt(pathToModels, modelName) {
     mkdir(pathToModels);
     var modelFile = path.normalize(pathToModels + '/' + modelName + '.js');
-    var modelTemplate = fs.readFileSync(__dirname + '/../templates/model/Model.ejs', 'utf-8');
     var fields = parseFields();
-    modelTemplate = modelTemplate.replace('{fields}', fields.join(',\n'));
-    modelTemplate = modelTemplate.replace(/{name}/gi, modelName);
-    modelTemplate = modelTemplate.replace('{nameToLowerCase}', modelName.toLowerCase());
-    write(modelFile, modelTemplate);
+    var modelFileData = modelTemplate({
+        modelName: modelName,
+        fields: fields.join(',\n'),
+        tableName: modelName.toLowerCase()
+    });
+    write(modelFile, modelFileData);
+}
+
+/**
+ * Create route at the given `name`.
+ *
+ * @param {String} pathToCtr
+ * @param {String} ctrName
+ */
+function createCtrAt(pathToCtr, ctrName) {
+    mkdir(pathToCtr);
+    var ctrFile = path.normalize(pathToCtr + '/' + ctrName + '.js');
+    var ctrFileData = ctrTemplate({
+        controllerName: ctrName,
+        modelName: ctrName.singularize().capitalize(),
+        itemName: ctrName.singularize(),
+        itemsName: ctrName
+    });
+    write(ctrFile, ctrFileData);
 }
 
 // parse Fields
@@ -208,26 +267,28 @@ function createApplicationAt(dstpath) {
             pkgProject.dependencies['caminte'] = '>=0.0.40'
         }
 
-        if (!pkgProject.dependencies[program.adapter]) {
-            pkgProject.dependencies[program.adapter] = 'latest'
-        }
-
         if (!pkgProject.dependencies['underscore']) {
             pkgProject.dependencies['underscore'] = 'latest'
         }
 
-        write(dstpath + 'package.json', JSON.stringify(pkgProject, null, 4));
+        var dbDriver = program.adapter,
+            dbHost = 'localhost',
+            dbPort = 3306,
+            dbBase = 'test',
+            dbUser = 'test',
+            dbPass = 'test';
 
-        var dbPort = 3306, dbBase = 'test';
         switch (program.adapter) {
             case 'redis':
                 dbPort = 6379;
                 break;
             case 'nano':
             case 'couchdb':
+                dbDriver = 'nano';
                 dbPort = 5984;
                 break;
             case 'postgres':
+                dbDriver = 'pg';
                 dbPort = 5432;
                 break;
             case 'rethinkdb':
@@ -235,23 +296,44 @@ function createApplicationAt(dstpath) {
                 break;
             case 'mongo':
             case 'mongodb':
+                dbDriver = 'mongodb';
+                dbPort = 27017;
+                break;
             case 'mongoose':
                 dbPort = 27017;
                 break;
             case 'tingodb':
-                dbPort = 0;
+                dbPort = '';
+                dbUser = '';
+                dbPass = '';
                 dbBase = './db/test';
                 mkdir(dstpath + '/db');
                 break;
             case 'sqlite3':
-                dbPort = 0;
+                dbPort = '';
+                dbUser = '';
+                dbPass = '';
                 dbBase = './db/test.db';
                 mkdir(dstpath + '/db');
                 break;
         }
+
+        if (!pkgProject.dependencies[program.adapter]) {
+            pkgProject.dependencies[program.adapter] = 'latest'
+        }
+
+        write(dstpath + 'package.json', JSON.stringify(pkgProject, null, 4));
         existsFile(dstpath + 'database.js', function (exists) {
             if (!exists) {
-                write(dstpath + 'database.js', cfg, 0755);
+                var cfgFileData = cfgTemplate({
+                    driver: program.adapter,
+                    port: dbPort,
+                    host: dbHost,
+                    database: dbBase,
+                    username: dbUser,
+                    password: dbPass
+                });
+                write(dstpath + 'database.js', cfgFileData, 0755);
             }
             process.nextTick(function () {
                 npmInstall(dstpath);
@@ -389,6 +471,7 @@ function checkIsProject(path) {
  * Prompt for confirmation on STDOUT/STDIN
  */
 function confirm(msg, callback) {
+
     var rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout

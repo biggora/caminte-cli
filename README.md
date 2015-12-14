@@ -2,6 +2,40 @@
 
   Command line interface for CaminteJS ORM
 
+## Installation
+
+    $ npm install -g caminte-cli
+    
+### Options
+
+    -h, --help                  output usage information
+    -V, --version               output the version number
+    -i, --iinit                 create caminte sctructure
+    -g, --model <modelname>     generate data model
+    -a, --adapter               database adapter (mysql|redis|etc...)
+    -f, --force                 force on non-empty directory
+
+## Quick Start
+
+ The quickest way to get started with caminte is to utilize the executable `caminte(1)` to create an application as shown below:
+
+Create structure:
+
+    $ caminte -i
+    
+Create model:
+
+    $ caminte -m User active:int name email password note:text created:date
+    
+Create routes:
+
+    $ caminte -r user
+    
+Create model and routes:
+
+    $ caminte -c Post published:bool title content:text created:date
+
+
 ### CaminteJS ORM db adapters:
     mysql, sqlite3, postgres, mongodb, redis, riak, couchdb(nano), rethinkdb, tingodb
 
@@ -25,38 +59,6 @@
       <td><img width="100" src="https://github.com/biggora/caminte/raw/master/media/cassandra.png"/></td>
     </tr>
 </table>
-
-## Installation
-
-    $ npm install -g caminte-cli
-
-## Quick Start
-
- The quickest way to get started with caminte is to utilize the executable `caminte(1)` to create an application as shown below:
-
- Install dependencies:
-
-    $ npm install
-
- Edit `./app.js` file, to configure the connection to the database server.
-
- Create model:
-
-    $ caminte -m User active:int name email password note:text created:date
-
-
-### Usage
-
-    $ caminte [options] [name]
-
-### Options
-
-    -h, --help                  output usage information
-    -V, --version               output the version number
-    -i, --iinit                 create caminte sctructure
-    -g, --model <modelname>     generate data model
-    -a, --adapter               database adapter (mysql|redis|etc...)
-    -f, --force                 force on non-empty directory
 
 
 ### Routes
