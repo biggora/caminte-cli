@@ -1,0 +1,58 @@
+{
+  "name": "caminte-cli",
+  "description": "Model generator for CaminteJS ORM",
+  "homepage": "http://camintejs.com/",
+  "version": "0.0.9",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/biggora/caminte-cli"
+  },
+  "bugs": {
+    "url": "https://github.com/biggora/caminte-cli/issues"
+  },
+  "author": {
+    "name": "Alexey Gordeyev",
+    "email": "aleksej@gordejev.lv"
+  },
+  "contributors": [
+    {
+      "name": "Alexey Gordeyev",
+      "email": "aleksej@gordejev.lv"
+    }
+  ],
+  "keywords": [
+    "caminte",
+    "server",
+    "rest",
+    "restful",
+    "app",
+    "api",
+    "redis",
+    "mysql",
+    "mariadb",
+    "mongodb",
+    "neo4j",
+    "nano",
+    "couchdb",
+    "firebird",
+    "postgres",
+    "sqlite3",
+    "tingodb",
+    "rethinkdb"
+  ],
+  "main": "bin/caminte.js",
+  "bin": {
+    "caminte": "./bin/caminte",
+    "camintejs": "./bin/caminte",
+    "cjs": "./bin/caminte"
+  },
+  "engines": {
+    "node": ">=0.10",
+    "npm": ">=1.5"
+  },
+  "dependencies": {
+    "commander": ">=2.3.0",
+    "mkdirp": ">=0.5.0"
+  },
+  "devDependencies": {}
+}
