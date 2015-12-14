@@ -1,8 +1,8 @@
 {
   "name": "caminte-cli",
-  "description": "Model generator for CaminteJS ORM",
+  "description": "Command line interface for CaminteJS ORM",
   "homepage": "http://camintejs.com/",
-  "version": "0.0.9",
+  "version": "1.0.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/biggora/caminte-cli"

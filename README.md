@@ -1,6 +1,6 @@
 ## CaminteJS CLI
 
-  Fast, unopinionated.
+  Command line interface for CaminteJS ORM
 
 ### CaminteJS ORM db adapters:
     mysql, sqlite3, postgres, mongodb, redis, riak, couchdb(nano), rethinkdb, tingodb
@@ -20,7 +20,9 @@
       <td><img width="100" src="https://github.com/biggora/caminte/raw/master/media/rethinkdb.png"/></td>
       <td><img width="100" src="https://github.com/biggora/caminte/raw/master/media/redis.png"/></td> 
       <td><img width="100" src="https://github.com/biggora/caminte/raw/master/media/tingodb.png"/></td>      
-      <td colspan="3"></td>
+      <td><img width="100" src="https://github.com/biggora/caminte/raw/master/media/neo4j.png"/></td> 
+      <td><img width="100" src="https://github.com/biggora/caminte/raw/master/media/arangodb.png"/></td>
+      <td><img width="100" src="https://github.com/biggora/caminte/raw/master/media/cassandra.png"/></td>
     </tr>
 </table>
 
@@ -32,10 +34,6 @@
 
  The quickest way to get started with caminte is to utilize the executable `caminte(1)` to generate an application as shown below:
 
- Create the app:
-
-    $ npm install -g caminte-cli
-    $ caminte -i test && cd ./test
 
  Install dependencies:
 
@@ -63,9 +61,6 @@
 
 ### Examples
 
-    # create new restful application
-    $ caminte -i Test -a mysql -j
-
     # create model
     $ caminte -g Post active:bool name:string desc:text created:date
 
@@ -79,8 +74,7 @@ will provide the following routes:
     GET           /:table/:id              show       
     POST          /:table                  create    
     PUT           /:table/:id              update      
-    DELETE        /:table/:id              destroy    
-    DELETE        /:table                  destroyall  
+    DELETE        /:table/:id              destroy 
 
 ### Directory structure
 
