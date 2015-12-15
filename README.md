@@ -15,11 +15,12 @@
     -h, --help               output usage information
     -V, --version            output the version number
     -i, --init               create config
-    -a, --adapter            database adapter (mysql|redis|etc...)
-    -m, --model <modelname>  generate data model
-    -r, --route <routename>  generate data routes
-    -c, --crud  <crudname>   generate data crud
-    -p, --parse <dumpfile>   parse sql dump
+    -a, --adapter [name]     database adapter (mysql|redis|etc...)
+    -m, --model <modelname>  create data model
+    -r, --route <routename>  create data routes
+    -c, --crud <crudname>    create model and route
+    -p, --parse <dumpfile>   parse sql dump file
+    -t, --tests              add tests
     -f, --force              force on non-empty directory
 
 
@@ -42,6 +43,44 @@ Create routes:
 Create model and routes:
 
     $ caminte -c Post published:bool title content:text created:date
+
+### Routes
+
+will provide the following routes:
+
+    method        route                    action 
+    ------------------------------------------------------------
+    GET           /:table                  index      
+    GET           /:table/:id              show       
+    POST          /:table                  create    
+    PUT           /:table/:id              update      
+    DELETE        /:table/:id              destroy 
+    DELETE        /:table/all              truncate
+
+### Directory structure
+
+On initialization directories tree generated, like that:
+
+    .
+    | 
+    |-- models
+    |   |-- User.js
+    |   `-- ...
+    |-- routes
+    |   |-- users.js
+    |   `-- ...
+    |-- test
+    |   |-- model
+    |   |   |-- user.js
+    |   |   `-- ...
+    |   |-- route
+    |   |   |-- user.js
+    |   |   `-- ...
+    |   |-- unit
+    |   |   |-- user.js
+    |   |   `-- ...
+    |   `-- tests.js
+    `-- database.js
 
 
 ### CaminteJS ORM db adapters:
@@ -69,34 +108,6 @@ Create model and routes:
 </table>
 
 
-### Routes
-
-will provide the following routes:
-
-    method        route                    action 
-    ------------------------------------------------------------
-    GET           /:table                  index      
-    GET           /:table/:id              show       
-    POST          /:table                  create    
-    PUT           /:table/:id              update      
-    DELETE        /:table/:id              destroy 
-    DELETE        /:table/all              truncate
-
-### Directory structure
-
-On initialization directories tree generated, like that:
-
-    .
-    | 
-    |-- models
-    |   |-- User.js
-    |   `-- ...
-    |-- routes
-    |   `-- users.js
-    |       `-- ...
-    `-- database.js
-
-
 ### Recommend extensions
 
 - [TrinteJS](http://www.trintejs.com/) - Javascrpt MVC Framework for Node.JS
@@ -107,7 +118,7 @@ On initialization directories tree generated, like that:
 
 (The MIT License)
  
-Copyright (c) 2014 Aleksej Gordejev &lt;aleksej@gordejev.lv&gt;
+Copyright (c) 2014 Alexey Gordeyev &lt;aleksej@gordejev.lv&gt;
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
