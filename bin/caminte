@@ -20,12 +20,13 @@ function list(val) {
 // CLI
 program
     .version(version)
-    .usage('[options] [dir]')
+    .usage('[options] [name]')
     .option('-i, --init', 'create config')
     .option('-a, --adapter', 'database adapter (mysql|redis|etc...)')
     .option('-m, --model <modelname>', 'generate data model')
     .option('-r, --route <routename>', 'generate data routes')
     .option('-c, --crud <crudname>', 'generate data crud')
+    .option('-p, --parse <dumpfile>', 'generate data crud')
     .option('-f, --force', 'force on non-empty directory')
     .parse(process.argv);
 
@@ -42,7 +43,9 @@ if (!program.adapter) {
     program.adapter = 'sqlite3';
 }
 
-if (!program.init && !program.model && !program.route && !program.crud) {
+if (!program.init && !program.model
+    && !program.route && !program.crud
+    && !program.parse) {
     program.help();
 }
 
@@ -70,16 +73,18 @@ if (program.crud) {
     });
 }
 
-function load_template(name) {
-    return fs.readFileSync(path.join(__dirname, '..', 'templates', name), 'utf-8');
+if (program.parse) {
+
 }
 
 var ctr = fs.readFileSync(__dirname + '/../templates/controller.ejs', 'utf-8');
 var mdl = fs.readFileSync(__dirname + '/../templates/model.ejs', 'utf-8');
-var cfg = fs.readFileSync(__dirname + '/../templates/database.js', 'utf-8');
+var cfg = fs.readFileSync(__dirname + '/../templates/database.ejs', 'utf-8');
+var mds = fs.readFileSync(__dirname + '/../templates/models.ejs', 'utf-8');
 
 var ctrTemplate = _.template(ctr);
 var modelTemplate = _.template(mdl);
+var modelsTemplate = _.template(mds);
 var cfgTemplate = _.template(cfg);
 
 // Create structure
@@ -167,12 +172,23 @@ function createModelAt(pathToModels, modelName) {
  */
 function createCtrAt(pathToCtr, ctrName) {
     mkdir(pathToCtr);
-    var ctrFile = path.normalize(pathToCtr + '/' + ctrName + '.js');
+    var regexp = '^\\d+$', ctrFile = path.normalize(pathToCtr + '/' + ctrName + '.js');
+    var pkgProject = loadPackageJson(path.normalize(pathToCtr + '/../'));
+    if ((pkgProject.caminte || {}).adapter) {
+        switch (pkgProject.caminte.adapter) {
+            case 'mongodb':
+            case 'mongoose':
+                regexp = '^[A-Za-z0-9]+$';
+                break;
+
+        }
+    }
     var ctrFileData = ctrTemplate({
         controllerName: ctrName,
         modelName: ctrName.singularize().capitalize(),
         itemName: ctrName.singularize(),
-        itemsName: ctrName
+        itemsName: ctrName,
+        regexp: regexp
     });
     write(ctrFile, ctrFileData);
 }
@@ -223,7 +239,7 @@ function parseFields() {
                 field += 'type : schema.String';
             }
             if (fdata[2]) {
-                field += ", 'default' : " + fdata[2];
+                field += ", default : " + fdata[2];
             }
             fields.push('           ' + fdata[0] + ' : { ' + field + ' }');
         }
@@ -244,8 +260,7 @@ function createApplicationAt(dstpath) {
         console.log();
     });
 
-    var pkgFile = fs.readFileSync(dstpath + 'package.json');
-    var pkgProject = JSON.parse(pkgFile);
+    var pkgProject = loadPackageJson(dstpath);
 
     if (pkgProject.caminte) {
         if (pkgProject.caminte.adapter) {
@@ -323,9 +338,9 @@ function createApplicationAt(dstpath) {
         }
 
         write(dstpath + 'package.json', JSON.stringify(pkgProject, null, 4));
-        existsFile(dstpath + 'database.js', function (exists) {
-            if (!exists) {
-                var cfgFileData = cfgTemplate({
+        existsFile(dstpath + 'models.js', function (mexists) {
+            if (!mexists) {
+                var modelsFileData = modelsTemplate({
                     driver: program.adapter,
                     port: dbPort,
                     host: dbHost,
@@ -333,10 +348,23 @@ function createApplicationAt(dstpath) {
                     username: dbUser,
                     password: dbPass
                 });
-                write(dstpath + 'database.js', cfgFileData, 0755);
+                write(dstpath + 'models.js', modelsFileData, 0755);
             }
-            process.nextTick(function () {
-                npmInstall(dstpath);
+            existsFile(dstpath + 'database.js', function (dexists) {
+                if (!dexists) {
+                    var cfgFileData = cfgTemplate({
+                        driver: program.adapter,
+                        port: dbPort,
+                        host: dbHost,
+                        database: dbBase,
+                        username: dbUser,
+                        password: dbPass
+                    });
+                    write(dstpath + 'database.js', cfgFileData, 0755);
+                }
+                process.nextTick(function () {
+                    npmInstall(dstpath);
+                });
             });
         });
     });
@@ -465,6 +493,11 @@ function checkIsProject(path) {
             abort('package.json not found');
         }
     });
+}
+
+function loadPackageJson(dstpath) {
+    var pkgFile = fs.readFileSync(dstpath + 'package.json');
+    return JSON.parse(pkgFile);
 }
 
 /**

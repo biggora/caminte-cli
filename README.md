@@ -8,12 +8,20 @@
     
 ### Options
 
-    -h, --help                  output usage information
-    -V, --version               output the version number
-    -i, --iinit                 create caminte sctructure
-    -g, --model <modelname>     generate data model
-    -a, --adapter               database adapter (mysql|redis|etc...)
-    -f, --force                 force on non-empty directory
+  Usage: caminte [options] [name]
+
+  Options:
+
+    -h, --help               output usage information
+    -V, --version            output the version number
+    -i, --init               create config
+    -a, --adapter            database adapter (mysql|redis|etc...)
+    -m, --model <modelname>  generate data model
+    -r, --route <routename>  generate data routes
+    -c, --crud  <crudname>   generate data crud
+    -p, --parse <dumpfile>   parse sql dump
+    -f, --force              force on non-empty directory
+
 
 ## Quick Start
 
@@ -72,6 +80,7 @@ will provide the following routes:
     POST          /:table                  create    
     PUT           /:table/:id              update      
     DELETE        /:table/:id              destroy 
+    DELETE        /:table/all              truncate
 
 ### Directory structure
 

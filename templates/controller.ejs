@@ -1,16 +1,32 @@
 /**
  *  <%- controllerName %> Routes
  *
- *  Created by create model script
+ *  Created by create caminte-cli script
  *  App based on CaminteJS
  *  CaminteJS homepage http://www.camintejs.com
  **/
+var _ = require('underscore');
 var express = require('express');
-var router = express.Router();
+var router = express.Router({mergeParams: true});
+var middleware;
+
+/* params router level */
+router.param('id', function (req, res, next, id) {
+   if (/<%- regexp %>/.test(id)) {
+      next();
+   } else {
+      next('route');
+   }
+});
+
+/* middleware router level */
+if (middleware) {
+   router.use(middleware);
+}
 
 /**
 * Index action, returns a list either
-* Default mapping to GET '/<%- itemsName %>'
+* Default mapping to GET '~/<%- itemsName %>'
 *
 * @param {Object} req
 * @param {Object} res
@@ -40,14 +56,17 @@ router.get('/', function (req, res) {
                     });
                 }
                 res.status(200);
-                res.json(<%- itemsName %>);
+                res.json({
+                     status: 200,
+                     data: <%- itemsName %>
+                });
             });
         });
 });
 
 /**
 * Show action, returns shows a single <%- itemName %>
-* Default mapping to GET '/<%- itemsName %>/:id'
+* Default mapping to GET '~/<%- itemsName %>/:id'
 *
 * @param {Object} req
 * @param {Object} res
@@ -81,7 +100,7 @@ router.get('/:id', function (req, res) {
 
 /**
 * Update action, updates a single <%- itemName %>
-* Default mapping to PUT '/<%- itemsName %>/:id', no GET mapping
+* Default mapping to PUT '~/<%- itemsName %>/:id', no GET mapping
 *
 * @param {Object} req
 * @param {Object} res
@@ -98,7 +117,7 @@ router.put('/:id', function (req, res) {
                 });
             }
             if (<%- itemName %>) {
-                <%- itemName %>.updateAttributes(filtered, function (err) {
+                <%- itemName %>.updateAttributes(req.body, function (err) {
                     if (err) {
                         res.status(400);
                         return res.json({
@@ -125,7 +144,7 @@ router.put('/:id', function (req, res) {
 
 /**
 * Create action, creates a single <%- itemName %>
-* Default mapping to POST '/<%- itemsName %>', no GET mapping
+* Default mapping to POST '~/<%- itemsName %>', no GET mapping
 *
 * @param {Object} req
 * @param {Object} res
@@ -133,7 +152,7 @@ router.put('/:id', function (req, res) {
 **/
 router.post('/', function (req, res) {
         var <%- modelName %> = req.app.models.<%- modelName %>;
-        var <%- itemName %> = new <%- modelName %>(filtered);
+        var <%- itemName %> = new <%- modelName %>(req.body);
         <%- itemName %>.isValid(function (isValid) {
             if (!isValid) {
                 res.status(400);
@@ -162,7 +181,7 @@ router.post('/', function (req, res) {
 
 /**
 * Delete action, deletes a single <%- itemName %>
-* Default mapping to DEL '/<%- itemsName %>/:id', no GET mapping
+* Default mapping to DEL '~/<%- itemsName %>/:id', no GET mapping
 *
 * @param {Object} req
 * @param {Object} res
@@ -178,6 +197,13 @@ router.delete('/:id', function (req, res) {
                     error: err
                 });
             }
+            if (!<%- itemName %>) {
+                res.status(404);
+                return res.json({
+                    status: 404,
+                    error: 'NotFound'
+                });
+           }
             <%- itemName %>.destroy(function (err) {
                 if (err) {
                     res.status(400);
@@ -198,7 +224,7 @@ router.delete('/:id', function (req, res) {
 
 /**
 * Delete action, deletes a all <%- itemName %>s
-* Default mapping to DEL '/<%- itemsName %>', no GET mapping
+* Default mapping to DEL '~/<%- itemsName %>', no GET mapping
 *
 * @param {Object} req
 * @param {Object} res
@@ -221,7 +247,6 @@ router.delete('/all', function (req, res) {
                 });
             }
         });
-    }
 });
 
 module.exports = router;
