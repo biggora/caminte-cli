@@ -14,7 +14,7 @@ var pkg = require('../package.json');
 var version = pkg.version;
 
 function list(val) {
-    return val.split(' ').map(String);
+    return val.split(/\s+/).map(String);
 }
 
 // CLI
@@ -22,14 +22,14 @@ program
     .version(version)
     .usage('[options] [name]')
     .option('-i, --init', 'create config')
-    .option('-a, --adapter', 'database adapter (mysql|redis|etc...)')
-    .option('-m, --model <modelname>', 'generate data model')
-    .option('-r, --route <routename>', 'generate data routes')
-    .option('-c, --crud <crudname>', 'generate data crud')
-    .option('-p, --parse <dumpfile>', 'generate data crud')
+    .option('-a, --adapter [name]', 'database adapter (mysql|redis|etc...)', 'sqlite3')
+    .option('-m, --model <modelname>', 'create data model', list)
+    .option('-r, --route <routename>', 'create data routes')
+    .option('-c, --crud <crudname>', 'create model and route')
+    .option('-p, --parse <dumpfile>', 'parse sql dump file')
+    .option('-t, --tests', 'add tests')
     .option('-f, --force', 'force on non-empty directory')
     .parse(process.argv);
-
 
 // Path
 var destination_path = './';
@@ -47,6 +47,10 @@ if (!program.init && !program.model
     && !program.route && !program.crud
     && !program.parse) {
     program.help();
+}
+
+if (program.parse) {
+
 }
 
 if (program.init) {
@@ -69,7 +73,11 @@ if (program.route) {
 if (program.crud) {
     program.crud = program.crud.toLowerCase().pluralize();
     createRoute(destination_path + 'routes', function () {
-        createModel(destination_path + 'models');
+        createModel(destination_path + 'models', function () {
+            if (program.tests) {
+                createTestAt(destination_path + 'test', program.crud);
+            }
+        });
     });
 }
 
@@ -195,10 +203,17 @@ function createCtrAt(pathToCtr, ctrName) {
 
 // parse Fields
 function parseFields() {
-    var fields = [];
+    var fields = [], model = (program.model || program.crud);
     for (var i in process.argv) {
         if (i > 3) {
-            var fdata = process.argv[i].split(':');
+            var fpret = process.argv[i];
+            if (/^[-]+/.test(fpret)) {
+                continue;
+            }
+            if (model === fpret) {
+                continue;
+            }
+            var fdata = fpret.split(':');
             var field = '';
             if (fdata[1]) {
                 var type = 'type : String';
@@ -248,6 +263,54 @@ function parseFields() {
 }
 
 /**
+ * Create tests at the given `name`.
+ *
+ * @param {String} pathToTest
+ * @param {String} testName
+ */
+function createTestAt(pathToTest, testName) {
+    if (!testName) {
+        abort('   aborting, not defined crud name');
+    }
+    mkdir(pathToTest);
+    mkdir(pathToTest + '/unit');
+    mkdir(pathToTest + '/model');
+    mkdir(pathToTest + '/route');
+    var modelName = testName.singularize().capitalize();
+    var itemName = modelName.toLowerCase().singularize();
+    var itemsName = itemName.pluralize();
+    var unitTest = fs.readFileSync(__dirname + '/../templates/test_unit.ejs', 'utf-8');
+    var modelTest = fs.readFileSync(__dirname + '/../templates/test_model.ejs', 'utf-8');
+    var routeTest = fs.readFileSync(__dirname + '/../templates/test_routes.ejs', 'utf-8');
+    var testUnitFile = path.normalize(pathToTest + '/unit/' + itemName + '.js');
+    var testModelFile = path.normalize(pathToTest + '/model/' + itemName + '.js');
+    var testRouteFile = path.normalize(pathToTest + '/route/' + itemName + '.js');
+    var unitTestTemplate = _.template(unitTest);
+    var modelTestTemplate = _.template(modelTest);
+    var routeTestTemplate = _.template(routeTest);
+    var unitTestFileData = unitTestTemplate({
+        controllerName: itemsName,
+        modelName: modelName,
+        itemName: itemName,
+        itemsName: itemsName
+    });
+    var modelTestFileData = modelTestTemplate({
+        controllerName: itemsName,
+        modelName: modelName,
+        itemName: itemName,
+        itemsName: itemsName
+    });
+    var routeTestFileData = routeTestTemplate({
+        controllerName: itemsName,
+        modelName: modelName,
+        itemName: itemName,
+        itemsName: itemsName
+    });
+    write(testUnitFile, unitTestFileData);
+    write(testModelFile, modelTestFileData);
+    write(testRouteFile, routeTestFileData);
+}
+/**
  * Create application at the given directory `path`.
  *
  * @param {String} path
@@ -255,9 +318,13 @@ function parseFields() {
 function createApplicationAt(dstpath) {
 
     process.on('exit', function () {
-        console.log();
-        console.log('complete');
-        console.log();
+        console.log('   Add the following strings');
+        console.log('   to your express app.js:');
+        console.log('   ');
+        console.log('   var models = require(\'./models\');');
+        console.log('   models.init(app);');
+        console.log('   ');
+        console.log('   ');
     });
 
     var pkgProject = loadPackageJson(dstpath);
@@ -277,6 +344,7 @@ function createApplicationAt(dstpath) {
     mkdir(dstpath, function () {
         mkdir(dstpath + 'models');
         mkdir(dstpath + 'routes');
+        mkdir(dstpath + 'test');
 
         if (!pkgProject.dependencies['caminte']) {
             pkgProject.dependencies['caminte'] = '>=0.0.40'
@@ -285,6 +353,20 @@ function createApplicationAt(dstpath) {
         if (!pkgProject.dependencies['underscore']) {
             pkgProject.dependencies['underscore'] = 'latest'
         }
+
+        var devDep = {
+            "mocha": "latest",
+            "should": "latest",
+            "superagent": "latest",
+            "istanbul": "latest",
+            "jshint": "2.x"
+        };
+
+        if (!pkgProject.devDependencies) {
+            pkgProject.devDependencies = {};
+        }
+        _.extend(pkgProject.devDependencies, devDep);
+        _.extend(pkgProject.scripts, {test: 'mocha -r should -R spec'});
 
         var dbDriver = program.adapter,
             dbHost = 'localhost',
@@ -295,6 +377,8 @@ function createApplicationAt(dstpath) {
 
         switch (program.adapter) {
             case 'redis':
+                dbUser = '';
+                dbPass = '';
                 dbPort = 6379;
                 break;
             case 'nano':
@@ -318,13 +402,15 @@ function createApplicationAt(dstpath) {
                 dbPort = 27017;
                 break;
             case 'tingodb':
+                dbHost = '';
                 dbPort = '';
                 dbUser = '';
                 dbPass = '';
                 dbBase = './db/test';
-                mkdir(dstpath + '/db');
+                mkdir(dstpath + 'db');
                 break;
             case 'sqlite3':
+                dbHost = '';
                 dbPort = '';
                 dbUser = '';
                 dbPass = '';
@@ -338,6 +424,8 @@ function createApplicationAt(dstpath) {
         }
 
         write(dstpath + 'package.json', JSON.stringify(pkgProject, null, 4));
+        copy(__dirname + '/../templates/tests.js', dstpath + 'test/tests.js');
+
         existsFile(dstpath + 'models.js', function (mexists) {
             if (!mexists) {
                 var modelsFileData = modelsTemplate({
@@ -472,8 +560,8 @@ function mkdir(path, cb) {
  */
 function npmInstall(dstpath, cb) {
     process.chdir(dstpath);
-    console.log('check dependencies, please wait...');
-    exec('npm install',
+    console.log('   check dependencies, please wait...');
+    exec('npm install --save-dev',
         function (error, stdout, stderr) {
             if (error !== null) {
                 console.log('exec error: ' + error);
@@ -522,6 +610,7 @@ function confirm(msg, callback) {
  * @param {String} str
  */
 function abort(str) {
-    console.error('\033[31m' + str + '\033[0m');
+    console.error('   \033[31m' + str + '\033[0m');
     process.exit(1);
 }
+

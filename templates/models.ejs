@@ -9,6 +9,7 @@
 var caminte = require('caminte');
 var Schema = caminte.Schema;
 var fs = require('fs');
+var path = require('path');
 var modelDir = path.resolve(__dirname, './models');
 var modelList = fs.readdirSync(modelDir);
 var dbConf = require('./database');
@@ -17,7 +18,7 @@ var schema = new Schema(database.driver, database);
 
 module.exports.init = function (app) {
 
-      process.env.AUTOUPDATE = true;
+      // process.env.AUTOUPDATE = true;
 
       if(!app.models) {
          app.models = {};

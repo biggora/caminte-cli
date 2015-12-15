@@ -1,0 +1,90 @@
+/**
+ *  <%- modelName %> Unit Test
+ *  Created by caminte-cli script
+ **/
+
+if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'test';
+}
+
+var should = require('should');
+var caminte = require('caminte');
+var config = require('../../database');
+var dbConf = config[process.env.NODE_ENV];
+var <%- modelName %>Model = require('../../models/<%- modelName %>');
+var Schema = caminte.Schema;
+dbConf.host = process.env.DB_HOST || dbConf.host;
+var schema = new Schema(dbConf.driver, dbConf);
+var <%- modelName %> = <%- modelName %>Model(schema);
+
+/**
+ * Simple tests for the Article model
+ */
+describe('<%- modelName %> unit:', function () {
+    'use strict';
+    var <%- itemName %>, id;
+
+    before(function (done) {
+        schema.autoupdate(function () {
+            'use strict';
+            done();
+        });
+    });
+
+    after(function (done) {
+        done();
+    });
+
+    describe('create unit', function () {
+
+        <%- itemName %> = new <%- modelName %>();
+        it('<%- itemName %> should be object', function () {
+            <%- itemName %>.should.be.type('object');
+        });
+
+        it('validate article', function (done) {
+            <%- itemName %>.isValid(function (valid) {
+                valid.should.be.true;
+                if (!valid) console.log(<%- itemName %>.errors);
+                done();
+            });
+        });
+
+    });
+
+    describe('#save()', function () {
+
+        it('should be have #save', function () {
+            <%- itemName %>.should.be.have.property('save');
+            <%- itemName %>.save.should.be.type('function');
+        });
+
+        it('call save()', function (done) {
+            <%- itemName %>.save(function (err) {
+                should.not.exist(err);
+                <%- itemName %>.should.be.have.property('id');
+                <%- itemName %>.id.should.not.eql(null);
+                id = <%- itemName %>.id;
+                done();
+            });
+        });
+
+    });
+
+    describe('#destroy()', function () {
+
+        it('should be have #destroy', function () {
+            <%- itemName %>.should.be.have.property('destroy');
+            <%- itemName %>.destroy.should.be.type('function');
+        });
+
+        it('call destroy()', function (done) {
+            <%- itemName %>.destroy(function (err) {
+                should.not.exist(err);
+                done();
+            });
+        });
+
+    });
+
+});

@@ -9,32 +9,32 @@
  **/
 
 module.exports.production = {
-    driver     : '<?= driver ?>',
-    <? if(host != '')  { ?>host       : '<?= host ?>',<? } else { ?>// host       : '127.0.0.1',<? } ?>
-    <? if(port != '')  { ?>port       : '<?= port ?>',<? } else { ?>// port       : '3306',<? } ?>
-    <? if(username != '')  { ?>username   : '<?= username ?>',<? } else { ?>// username   : 'test',<? } ?>
-    <? if(password != '')  { ?>password   : '<?= password ?>',<? } else { ?>// password   : 'test',<? } ?>
-    <? if(database != '')  { ?>database   : '<?= database ?>',<? } else { ?>// database   : 'test',<? } ?>
+    driver     : '<%- driver %>',
+    <% if(host != '')  { %>host       : '<%- host %>',<% } else { %>// host       : '127.0.0.1',<% } %>
+    <% if(port != '')  { %>port       : '<%- port %>',<% } else { %>// port       : '3306',<% } %>
+    <% if(username != '')  { %>username   : '<%- username %>',<% } else { %>// username   : 'test',<% } %>
+    <% if(password != '')  { %>password   : '<%- password %>',<% } else { %>// password   : 'test',<% } %>
+    <% if(database != '')  { %>database   : '<%- database %>',<% } else { %>// database   : 'test',<% } %>
     autoReconnect : true
 };
 
 module.exports.development = {
-    driver     : '<?= driver ?>',
-    <? if(host != '')  { ?>host       : '<?= host ?>',<? } else { ?>// host       : '127.0.0.1',<? } ?>
-    <? if(port != '')  { ?>port       : '<?= port ?>',<? } else { ?>// port       : '3306',<? } ?>
-    <? if(username != '')  { ?>username   : '<?= username ?>',<? } else { ?>// username   : 'test',<? } ?>
-    <? if(password != '')  { ?>password   : '<?= password ?>',<? } else { ?>// password   : 'test',<? } ?>
-    <? if(database != '')  { ?>database   : '<?= database ?>',<? } else { ?>// database   : 'test',<? } ?>
+    driver     : '<%- driver %>',
+    <% if(host != '')  { %>host       : '<%- host %>',<% } else { %>// host       : '127.0.0.1',<% } %>
+    <% if(port != '')  { %>port       : '<%- port %>',<% } else { %>// port       : '3306',<% } %>
+    <% if(username != '')  { %>username   : '<%- username %>',<% } else { %>// username   : 'test',<% } %>
+    <% if(password != '')  { %>password   : '<%- password %>',<% } else { %>// password   : 'test',<% } %>
+    <% if(database != '')  { %>database   : '<%- database %>',<% } else { %>// database   : 'test',<% } %>
     autoReconnect : true
 };
 
 module.exports.test = {
-    driver     : '<?= driver ?>',
-    <? if(host != '')  { ?>host       : '<?= host ?>',<? } else { ?>// host       : '127.0.0.1',<? } ?>
-    <? if(port != '')  { ?>port       : '<?= port ?>',<? } else { ?>// port       : '3306',<? } ?>
-    <? if(username != '')  { ?>username   : '<?= username ?>',<? } else { ?>// username   : 'test',<? } ?>
-    <? if(password != '')  { ?>password   : '<?= password ?>',<? } else { ?>// password   : 'test',<? } ?>
-    <? if(database != '')  { ?>database   : '<?= database ?>',<? } else { ?>// database   : 'test',<? } ?>
+    driver     : '<%- driver %>',
+    <% if(host != '')  { %>host       : '<%- host %>',<% } else { %>// host       : '127.0.0.1',<% } %>
+    <% if(port != '')  { %>port       : '<%- port %>',<% } else { %>// port       : '3306',<% } %>
+    <% if(username != '')  { %>username   : '<%- username %>',<% } else { %>// username   : 'test',<% } %>
+    <% if(password != '')  { %>password   : '<%- password %>',<% } else { %>// password   : 'test',<% } %>
+    <% if(database != '')  { %>database   : '<%- database %>',<% } else { %>// database   : 'test',<% } %>
     autoReconnect : true
 };
 

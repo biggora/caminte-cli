@@ -1,0 +1,98 @@
+/**
+ *  <%- modelName %> Functional Test
+ *  Created by caminte-cli script
+ **/
+
+if (!process.env.NODE_ENV) {
+    process.env.NODE_ENV = 'test';
+}
+
+var request = require('supertest');
+var app = require('../../app');
+var id, <%- itemName %>;
+
+describe('<%- modelName %> routes:', function () {
+
+    before(function (done) {
+        done();
+    });
+
+    it('<%- itemsName %>#create', function (done) {
+        request(app)
+            .post('/<%- itemsName %>')
+            // .field('name', 'my awesome avatar')
+            .set('Accept', 'application/json')
+            .expect(201)
+            .end(function (err, res) {
+                if (err) return done(err);
+                res.body.should.be.have.property('data');
+                id = res.body.data.id;
+                done();
+            });
+    });
+
+
+    it('<%- itemsName %>#index', function (done) {
+        request(app)
+            .get('/<%- itemsName %>')
+            .set('Accept', 'application/json')
+            .expect(200)
+            .end(function(err, res){
+                if (err) return done(err);
+                res.body.should.be.have.property('data');
+                done();
+            });
+    });
+
+
+    it('<%- itemsName %>#show', function (done) {
+        request(app)
+            .get('/<%- itemsName %>/' + id)
+            .set('Accept', 'application/json')
+            .expect(200)
+            .end(function (err, res) {
+                if (err) return done(err);
+                res.body.should.be.have.property('data');
+                <%- itemName %> = res.body.data;
+                done();
+            });
+    });
+
+    it('<%- itemsName %>#update', function (done) {
+        request(app)
+            .put('/<%- itemsName %>/' + id)
+            .set('Accept', 'application/json')
+            // .field('name', 'my awesome avatar')
+            .expect(200)
+            .end(function(err, res){
+                if (err) return done(err);
+                res.body.should.be.have.property('data');
+                done();
+            });
+    });
+
+    it('<%- itemsName %>#delete', function (done) {
+        request(app)
+            .delete('/<%- itemsName %>/' + id)
+            .set('Accept', 'application/json')
+            .expect(204)
+            .end(function(err, res){
+                if (err) return done(err);
+                // res.body.should.be.have.property('data');
+                done();
+            });
+    });
+
+    it('<%- itemsName %>#deleteAll', function (done) {
+        request(app)
+            .delete('/<%- itemsName %>/all')
+            .set('Accept', 'application/json')
+            .expect(204)
+            .end(function(err, res){
+                if (err) return done(err);
+                // res.body.should.be.have.property('data');
+                done();
+            });
+    });
+
+});
