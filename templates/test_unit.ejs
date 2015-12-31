@@ -25,24 +25,21 @@ describe('<%- modelName %> unit:', function () {
     var <%- itemName %>, id;
 
     before(function (done) {
-        schema.autoupdate(function () {
-            'use strict';
-            done();
-        });
+        schema.autoupdate(done);
     });
 
     after(function (done) {
         done();
     });
 
-    describe('create unit', function () {
+    describe('create', function () {
 
         <%- itemName %> = new <%- modelName %>();
         it('<%- itemName %> should be object', function () {
             <%- itemName %>.should.be.type('object');
         });
 
-        it('validate article', function (done) {
+        it('validate', function (done) {
             <%- itemName %>.isValid(function (valid) {
                 valid.should.be.true;
                 if (!valid) console.log(<%- itemName %>.errors);
@@ -52,14 +49,14 @@ describe('<%- modelName %> unit:', function () {
 
     });
 
-    describe('#save()', function () {
+    describe('save', function () {
 
         it('should be have #save', function () {
             <%- itemName %>.should.be.have.property('save');
             <%- itemName %>.save.should.be.type('function');
         });
 
-        it('call save()', function (done) {
+        it('call', function (done) {
             <%- itemName %>.save(function (err) {
                 should.not.exist(err);
                 <%- itemName %>.should.be.have.property('id');
@@ -71,14 +68,14 @@ describe('<%- modelName %> unit:', function () {
 
     });
 
-    describe('#destroy()', function () {
+    describe('destroy', function () {
 
         it('should be have #destroy', function () {
             <%- itemName %>.should.be.have.property('destroy');
             <%- itemName %>.destroy.should.be.type('function');
         });
 
-        it('call destroy()', function (done) {
+        it('call', function (done) {
             <%- itemName %>.destroy(function (err) {
                 should.not.exist(err);
                 done();

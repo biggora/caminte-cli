@@ -18,7 +18,7 @@
     -a, --adapter [name]     database adapter (mysql|redis|etc...)
     -m, --model <modelname>  create data model
     -r, --route <routename>  create data routes
-    -c, --crud <crudname>    create model and route
+    -c, --crud  <crudname>   create model and route
     -p, --parse <dumpfile>   parse sql dump file
     -t, --tests              add tests
     -f, --force              force on non-empty directory
@@ -50,7 +50,8 @@ will provide the following routes:
 
     method        route                    action 
     ------------------------------------------------------------
-    GET           /:table                  index      
+    GET           /:table                  index    
+    GET           /:table/new              new     
     GET           /:table/:id              show       
     POST          /:table                  create    
     PUT           /:table/:id              update      

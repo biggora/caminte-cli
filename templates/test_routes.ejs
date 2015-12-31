@@ -19,6 +19,20 @@ describe('<%- modelName %> routes:', function () {
 
     it('<%- itemsName %>#create', function (done) {
         request(app)
+            .get('/new')
+            // .field('name', 'my awesome avatar')
+            .set('Accept', 'application/json')
+            .expect(200)
+            .end(function (err, res) {
+                if (err) return done(err);
+                res.body.should.be.have.property('data');
+                id = res.body.data.id;
+                done();
+            });
+    });
+    
+    it('<%- itemsName %>#create', function (done) {
+        request(app)
             .post('/<%- itemsName %>')
             // .field('name', 'my awesome avatar')
             .set('Accept', 'application/json')

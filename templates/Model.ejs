@@ -14,6 +14,9 @@
 module.exports = function(schema){
     var <%- modelName %> = schema.define('<%- tableName %>', {
 <%- fields %>
+    },{
+<%- pkeys %>
+<%- indexes %>
     });
     return <%- modelName %>;
 };

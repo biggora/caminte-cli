@@ -65,6 +65,24 @@ router.get('/', function (req, res) {
 });
 
 /**
+* New action, returns new a single <%- itemName %>
+* Default mapping to GET '~/<%- itemsName %>/new'
+*
+* @param {Object} req
+* @param {Object} res
+* @param {Function} next
+**/
+router.get('/new', function (req, res) {
+        var <%- modelName %> = req.app.models.<%- modelName %>;
+        var <%- itemName %> = new <%- modelName %>(req.body);
+        res.status(200);
+        res.json({
+            status: 200,
+            data: <%- itemName %>.toObject()
+        });
+});
+
+/**
 * Show action, returns shows a single <%- itemName %>
 * Default mapping to GET '~/<%- itemsName %>/:id'
 *

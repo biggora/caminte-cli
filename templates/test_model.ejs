@@ -22,11 +22,7 @@ describe('<%- modelName %> model:', function () {
     var id;
 
     before(function (done) {
-        schema.autoupdate(function () {
-              <%- modelName %>.destroyAll(function (err) {
-                      done();
-              });
-        });
+        schema.autoupdate(done);
     });
 
     it('#create', function (done) {
@@ -102,6 +98,16 @@ describe('<%- modelName %> model:', function () {
         });
     });
 
+    it('#destroyAll', function (done) {
+        <%- modelName %>.destroyAll(function (err) {
+            should.not.exist(err);
+            <%- modelName %>.find({}, function (err, founds) {
+                should.not.exist(err);
+                founds.should.length(0);
+                done();
+            });
+        });
+    });
 /*
     describe('properties methods:', function () {
 
