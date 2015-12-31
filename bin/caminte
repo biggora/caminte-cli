@@ -25,13 +25,13 @@ function list(val) {
 // CLI
 program
     .version(version)
-    .usage('[options] [name]')
-    .option('-i, --init', 'create config')
+    .usage('[options] [name] [fields]')
+    .option('-i, --init', 'create structure and config')
     .option('-a, --adapter [name]', 'database adapter (mysql|redis|etc...)', 'sqlite3')
     .option('-m, --model <modelname>', 'create data model')
     .option('-r, --route <routename>', 'create data routes')
     .option('-c, --crud  <crudname>', 'create model and route')
-    .option('-d, --dump <dumpfile>', 'parse sql dump file')
+    .option('-d, --dump  <dumpfile>', 'parse sql dump file')
     .option('-t, --tests', 'add tests')
     .option('-f, --force', 'force on non-empty directory')
     .parse(process.argv);

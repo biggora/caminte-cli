@@ -1,6 +1,6 @@
 ## CaminteJS CLI
 
-  Command line interface for CaminteJS ORM
+  Command line interface for [CaminteJS](https://github.com/biggora/caminte) Cross-db ORM
 
 ## Installation
 
@@ -8,20 +8,20 @@
     
 ### Options
 
-  Usage: caminte [options] [name]
+  Usage: caminte [options] [name] [fields]
 
   Options:
 
-    -h, --help               output usage information
-    -V, --version            output the version number
-    -i, --init               create config
-    -a, --adapter [name]     database adapter (mysql|redis|etc...)
-    -m, --model <modelname>  create data model
-    -r, --route <routename>  create data routes
-    -c, --crud  <crudname>   create model and route
-    -d, --dump  <dumpfile>   parse sql dump file
-    -t, --tests              add tests
-    -f, --force              force on non-empty directory
+    -h, --help                        output usage information
+    -V, --version                     output the version number
+    -i, --init                        create structure and config
+    -a, --adapter [name]              database adapter (mysql|redis|etc...)
+    -m, --model <modelname> [fields]  create data model
+    -r, --route <routename>           create data routes
+    -c, --crud  <crudname>  [fields]  create model and route
+    -d, --dump  <dumpfile>            parse sql dump file
+    -t, --tests                       add tests
+    -f, --force                       force on non-empty directory
 
 
 ## Quick Start
