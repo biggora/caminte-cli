@@ -44,6 +44,12 @@ Create model and routes:
     # with tests    
     $ caminte -t -c User active:int name email password note:text created:date
     
+    
+Create model and routes from SQL dump:
+
+    $ caminte -d dumpfile.sql
+   
+    
 ### Routes
 
 will provide the following routes:
