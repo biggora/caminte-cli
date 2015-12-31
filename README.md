@@ -35,10 +35,8 @@ Create structure:
 Create model:
 
     $ caminte -m User active:int name email password note:text created:date
-    
-Create routes:
-
-    $ caminte -r user
+    # with tests  
+    $ caminte -t -m User active:int name email password note:text created:date
     
 Create model and routes:
 
@@ -59,6 +57,8 @@ will provide the following routes:
     PUT           /:table/:id              update      
     DELETE        /:table/:id              destroy 
     DELETE        /:table/all              truncate
+
+
 
 ### Directory structure
 

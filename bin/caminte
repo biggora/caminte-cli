@@ -60,6 +60,23 @@ if (program.init) {
     createApplication(destination_path);
 } else if (program.dump) {
     try {
+
+        process.on('exit', function () {
+            console.log('   ');
+            console.log('   ');
+            console.log('   Add the following strings');
+            console.log('   to your app.js:');
+            console.log('   ');
+            console.log('   var models = require(\'./models\');');
+            console.log('   models.init(app);');
+            console.log('   ');
+            console.log('   and add routes as example:');
+            console.log('   ');
+            console.log('   var users = require(\'./routes/users\');');
+            console.log('   app.use(\'/users\', users);');
+            console.log('   ');
+        });
+
         var pathToModels = destination_path + 'models';
         var dump = fs.readFileSync(program.dump, 'utf-8');
         var dbType = sqlparser.checkdb(dump);
@@ -236,9 +253,9 @@ function createCtrAt(pathToCtr, ctrName) {
     }
     var ctrFileData = ctrTemplate({
         controllerName: ctrName,
-        modelName: ctrName.singularize().capitalize(),
+        modelName: ctrName,
         itemName: ctrName.toLowerCase().singularize(),
-        itemsName: ctrName.toLowerCase(),
+        itemsName: ctrName.toLowerCase().pluralize(),
         regexp: regexp
     });
     write(ctrFile, ctrFileData);
