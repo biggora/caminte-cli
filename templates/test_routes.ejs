@@ -17,16 +17,15 @@ describe('<%- modelName %> routes:', function () {
         done();
     });
 
-    it('<%- itemsName %>#create', function (done) {
+    it('<%- itemsName %>#new', function (done) {
         request(app)
-            .get('/new')
+            .get('/<%- itemsName %>/new')
             // .field('name', 'my awesome avatar')
             .set('Accept', 'application/json')
             .expect(200)
             .end(function (err, res) {
                 if (err) return done(err);
                 res.body.should.be.have.property('data');
-                id = res.body.data.id;
                 done();
             });
     });

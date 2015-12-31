@@ -495,30 +495,92 @@ function createApplicationAt(dstpath) {
                 dbPass = 'test';
 
             switch (program.adapter) {
+                case 'mysql':
+                case 'maria':
+                case 'mariadb':
+                    dbDriver = 'mysql';
+                    dbPort = 3306;
+                    _.extend(pkgProject.dependencies, {
+                        mysql: '>= 2.0.0'
+                    });
+                    break;
                 case 'redis':
                     dbUser = '';
                     dbPass = '';
                     dbPort = 6379;
+                    _.extend(pkgProject.dependencies, {
+                        redis: 'latest'
+                    });
                     break;
                 case 'nano':
                 case 'couchdb':
                     dbDriver = 'nano';
                     dbPort = 5984;
+                    _.extend(pkgProject.dependencies, {
+                        nano: 'latest'
+                    });
                     break;
                 case 'postgres':
-                    dbDriver = 'pg';
+                    dbDriver = 'postgres';
                     dbPort = 5432;
+                    _.extend(pkgProject.dependencies, {
+                        pg: 'latest'
+                    });
+                    break;
+                case 'firebird':
+                    dbDriver = 'firebird';
+                    dbPort = '';
+                    dbBase = 'test.fdb';
+                    _.extend(pkgProject.dependencies, {
+                        'node-firebird': '>= 0.7.2'
+                    });
+                    break;
+                case 'neo4j':
+                    dbDriver = 'neo4j';
+                    dbPort = 7474;
+                    _.extend(pkgProject.dependencies, {
+                        'node-neo4j': '^2.0.3'
+                    });
+                    break;
+                case 'riak':
+                    dbDriver = 'riak';
+                    dbPort = 8098;
+                    _.extend(pkgProject.dependencies, {
+                        'riak-js': '>= 1.0.0'
+                    });
                     break;
                 case 'rethinkdb':
+                    dbDriver = 'rethinkdb';
                     dbPort = 28015;
+                    _.extend(pkgProject.dependencies, {
+                        rethinkdb: '>= 1.16',
+                        moment: 'latest',
+                        async: 'latest',
+                        'generic-pool': 'latest'
+                    });
+                    break;
+                case 'arango':
+                case 'arangodb':
+                    dbDriver = 'arangojs';
+                    dbPort = 8529;
+                    _.extend(pkgProject.dependencies, {
+                        arangojs: '>= 4.2.0'
+                    });
                     break;
                 case 'mongo':
                 case 'mongodb':
                     dbDriver = 'mongodb';
                     dbPort = 27017;
+                    _.extend(pkgProject.dependencies, {
+                        mongodb: 'latest'
+                    });
                     break;
                 case 'mongoose':
                     dbPort = 27017;
+                    _.extend(pkgProject.dependencies, {
+                        mongodb: 'latest',
+                        mongoose: 'latest'
+                    });
                     break;
                 case 'tingodb':
                     dbHost = '';
@@ -527,6 +589,9 @@ function createApplicationAt(dstpath) {
                     dbPass = '';
                     dbBase = './db/test';
                     mkdir(dstpath + 'db');
+                    _.extend(pkgProject.dependencies, {
+                        tingodb: 'latest'
+                    });
                     break;
                 case 'sqlite3':
                     dbHost = '';
@@ -535,11 +600,14 @@ function createApplicationAt(dstpath) {
                     dbPass = '';
                     dbBase = './db/test.db';
                     mkdir(dstpath + '/db');
+                    _.extend(pkgProject.dependencies, {
+                        sqlite3: '^3.1.0'
+                    });
                     break;
-            }
-
-            if (!pkgProject.dependencies[program.adapter]) {
-                pkgProject.dependencies[program.adapter] = 'latest'
+                default:
+                    if (!pkgProject.dependencies[program.adapter]) {
+                        pkgProject.dependencies[program.adapter] = 'latest'
+                    }
             }
 
             write(dstpath + 'package.json', JSON.stringify(pkgProject, null, 4));

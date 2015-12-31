@@ -19,7 +19,7 @@
     -m, --model <modelname>  create data model
     -r, --route <routename>  create data routes
     -c, --crud  <crudname>   create model and route
-    -p, --parse <dumpfile>   parse sql dump file
+    -d, --dump  <dumpfile>   parse sql dump file
     -t, --tests              add tests
     -f, --force              force on non-empty directory
 
@@ -30,7 +30,7 @@
 
 Create structure:
 
-    $ caminte -i
+    $ caminte -i -a mysql
     
 Create model:
 
@@ -43,7 +43,9 @@ Create routes:
 Create model and routes:
 
     $ caminte -c Post published:bool title content:text created:date
-
+    # with tests    
+    $ caminte -t -c User active:int name email password note:text created:date
+    
 ### Routes
 
 will provide the following routes:
