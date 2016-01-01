@@ -23,6 +23,9 @@
     -t, --tests                       add tests
     -f, --force                       force on non-empty directory
 
+### Usage with Express
+
+[Usage with Express.JS here](https://github.com/biggora/caminte/wiki/usage-with-express.js)
 
 ## Quick Start
 
@@ -66,7 +69,6 @@ will provide the following routes:
     DELETE        /:table/all              truncate
 
 
-
 ### Directory structure
 
 On initialization directories tree generated, like that:
@@ -94,7 +96,7 @@ On initialization directories tree generated, like that:
 
 
 ### CaminteJS ORM db adapters:
-    mysql, sqlite3, postgres, mongodb, redis, riak, couchdb(nano), rethinkdb, tingodb
+    mysql, sqlite3, postgres, mongodb, redis, neo4j, riak, couchdb, rethinkdb, tingodb, arangodb
 
 <table>
     <tr>

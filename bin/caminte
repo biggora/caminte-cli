@@ -188,20 +188,21 @@ function createModel(root, cb) {
 // Generate Route
 function createRoute(root, cb) {
     var ctrName = (program.route || program.crud).toLowerCase().pluralize();
+    var modelName = ctrName.singularize().camelize();
     var pathToCtr = path.resolve(root + '/' + ctrName + '.js');
     existsFile(pathToCtr, function (empty) {
         if (!empty || program.force) {
             createCtrAt(root, ctrName);
             if (program.tests) {
-                createRoutesTestAt('./test', ctrName);
+                createRoutesTestAt('./test', ctrName, modelName);
             }
             return cb && cb();
         } else {
             confirm('   routes is exists, continue? [y/N] ', function (ok) {
                 if (ok) {
-                    createCtrAt(root, ctrName);
+                    createCtrAt(root, ctrName, modelName);
                     if (program.tests) {
-                        createRoutesTestAt('./test', ctrName);
+                        createRoutesTestAt('./test', ctrName, modelName);
                     }
                     return cb && cb();
                 } else {
@@ -238,7 +239,7 @@ function createModelAt(pathToModels, modelName) {
  * @param {String} pathToCtr
  * @param {String} ctrName
  */
-function createCtrAt(pathToCtr, ctrName) {
+function createCtrAt(pathToCtr, ctrName, modelName) {
     mkdir(pathToCtr);
     var regexp = '^\\d+$', ctrFile = path.normalize(pathToCtr + '/' + ctrName + '.js');
     var pkgProject = loadPackageJson(path.normalize(pathToCtr + '/../'));
@@ -253,7 +254,7 @@ function createCtrAt(pathToCtr, ctrName) {
     }
     var ctrFileData = ctrTemplate({
         controllerName: ctrName,
-        modelName: ctrName,
+        modelName: modelName,
         itemName: ctrName.toLowerCase().singularize(),
         itemsName: ctrName.toLowerCase().pluralize(),
         regexp: regexp
@@ -483,7 +484,7 @@ function createApplicationAt(dstpath) {
         ], function () {
 
             if (!pkgProject.dependencies['caminte']) {
-                pkgProject.dependencies['caminte'] = '>=0.0.40'
+                pkgProject.dependencies['caminte'] = '>=0.2.2'
             }
 
             if (!pkgProject.dependencies['underscore']) {
