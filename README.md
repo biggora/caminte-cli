@@ -26,26 +26,27 @@
 
 ## Quick Start
 
- The quickest way to get started with caminte is to utilize the executable `caminte(1)` to create an application as shown below:
+ The quickest way to get started with caminte is to utilize the executable `caminte(1)` to create an models and routes as shown below:
 
-Create structure:
+### Create structure:
 
     $ caminte -i -a mysql
     
-Create model:
+### Create model:
 
     $ caminte -m User active:int name email password note:text created:date
     # with tests  
     $ caminte -t -m User active:int name email password note:text created:date
+   
     
-Create model and routes:
+### Create model and routes:
 
     $ caminte -c Post published:bool title content:text created:date
     # with tests    
     $ caminte -t -c User active:int name email password note:text created:date
     
     
-Create model and routes from SQL dump:
+### Create model and routes from SQL dump:
 
     $ caminte -d dumpfile.sql
    

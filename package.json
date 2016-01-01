@@ -2,7 +2,8 @@
   "name": "caminte-cli",
   "description": "Command line interface for CaminteJS ORM",
   "homepage": "http://camintejs.com/",
-  "version": "1.0.0",
+  "version": "1.0.1",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git://github.com/biggora/caminte-cli"
@@ -11,8 +12,9 @@
     "url": "https://github.com/biggora/caminte-cli/issues"
   },
   "author": {
-    "name": "Alexey Gordeyev",
-    "email": "aleksej@gordejev.lv"
+    "name": "Aleksej Gordejev",
+    "email": "aleksej@gordejev.lv",
+    "url": "http://www.gordejev.lv"
   },
   "contributors": [
     {
@@ -50,6 +52,7 @@
     "npm": ">=1.5"
   },
   "dependencies": {
+    "caminte": "latest",
     "commander": ">=2.7.0",
     "mkdirp": "latest",
     "async": "latest",
