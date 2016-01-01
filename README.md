@@ -25,7 +25,7 @@
 
 ### Usage with Express
 
-[Usage with Express.JS here](https://github.com/biggora/caminte/wiki/usage-with-express.js)
+[Usage with Express.JS here](https://github.com/biggora/caminte-cli/wiki/Usage-with-express.js)
 
 ## Quick Start
 
