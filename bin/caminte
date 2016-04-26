@@ -108,7 +108,7 @@ if (program.init) {
                     });
                     modelFileData = _.unescape(modelFileData);
                     write(modelFile, modelFileData);
-                    createCtrAt(destination_path + 'routes', model.modelName);
+                    createCtrAt(destination_path + 'routes', model.modelName, model.modelName);
                     if (program.tests) {
                         createUnitTestAt(destination_path + 'test', model.modelName);
                         createModelTestAt(destination_path + 'test', model.modelName);
