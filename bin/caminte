@@ -483,18 +483,18 @@ function createApplicationAt(dstpath) {
         ], function () {
 
             if (!pkgProject.dependencies['caminte']) {
-                pkgProject.dependencies['caminte'] = '>=0.2.2'
+                pkgProject.dependencies['caminte'] = '^0.2.13'
             }
 
             if (!pkgProject.dependencies['underscore']) {
-                pkgProject.dependencies['underscore'] = 'latest'
+                pkgProject.dependencies['underscore'] = '^1.8.3'
             }
 
             var devDep = {
-                "mocha": "latest",
-                "should": "latest",
-                "superagent": "latest",
-                "istanbul": "latest",
+                "mocha": "^3.0.2",
+                "should": "^11.1.0",
+                "supertest": "^2.0.0",
+                "istanbul": "^0.4.5",
                 "jshint": "2.x"
             };
 
@@ -526,7 +526,7 @@ function createApplicationAt(dstpath) {
                     dbPass = '';
                     dbPort = 6379;
                     _.extend(pkgProject.dependencies, {
-                        redis: 'latest'
+                        redis: '^2.6.2'
                     });
                     break;
                 case 'nano':
