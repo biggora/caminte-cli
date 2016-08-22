@@ -14,7 +14,11 @@ var id, <%- itemName %>;
 describe('<%- modelName %> routes:', function () {
 
     before(function (done) {
-        done();
+       done();
+    });
+
+    after(function (done) {
+       <%- modelName %>.destroyAll(done);
     });
 
     it('<%- itemsName %>#new', function (done) {
@@ -29,7 +33,7 @@ describe('<%- modelName %> routes:', function () {
                 done();
             });
     });
-    
+
     it('<%- itemsName %>#create', function (done) {
         request(app)
             .post('/<%- itemsName %>')

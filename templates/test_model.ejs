@@ -25,6 +25,10 @@ describe('<%- modelName %> model:', function () {
         schema.autoupdate(done);
     });
 
+    after(function (done) {
+        <%- modelName %>.destroyAll(done);
+    });
+
     it('#create', function (done) {
         <%- modelName %>.create(function (err, created) {
             should.not.exist(err);
@@ -46,7 +50,7 @@ describe('<%- modelName %> model:', function () {
     it('#findById', function (done) {
         <%- modelName %>.findById(id, function (err, found) {
             should.not.exist(err);
-            found.id.should.equal(id);
+            found.id.should.eql(id);
             done();
         });
     });
@@ -58,7 +62,7 @@ describe('<%- modelName %> model:', function () {
             }
         }, function (err, found) {
             should.not.exist(err);
-            found.id.should.equal(id);
+            found.id.should.eql(id);
             done();
         });
     });
@@ -82,7 +86,7 @@ describe('<%- modelName %> model:', function () {
     it('#count', function (done) {
         <%- modelName %>.count({}, function (err, count) {
             should.not.exist(err);
-            count.should.equal(1);
+            count.should.eql(1);
             done();
         });
     });

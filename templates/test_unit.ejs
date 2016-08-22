@@ -29,7 +29,7 @@ describe('<%- modelName %> unit:', function () {
     });
 
     after(function (done) {
-        done();
+        <%- modelName %>.destroyAll(done);
     });
 
     describe('create', function () {
