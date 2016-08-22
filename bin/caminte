@@ -138,7 +138,6 @@ if (program.init) {
     });
 }
 
-
 // Create structure
 function createApplication(dstpath) {
     emptyDirectory(dstpath, function (empty) {
