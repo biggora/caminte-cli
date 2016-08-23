@@ -1,3 +1,5 @@
+[![Dependency Status](https://gemnasium.com/biggora/caminte-cli.png)](https://gemnasium.com/biggora/caminte-cli)
+[![NPM version](https://badge.fury.io/js/caminte-cli.png)](http://badge.fury.io/js/caminte-cli)
 ## CaminteJS CLI
 
   Command line interface for [CaminteJS](https://github.com/biggora/caminte) Cross-db ORM
