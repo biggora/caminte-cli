@@ -33,35 +33,67 @@ if (middleware) {
 * @param {Function} next
 **/
 router.get('/', function (req, res) {
-        var <%- modelName %> = req.app.models.<%- modelName %>;
-        var query = req.query;
-        var skip = query.skip ? parseInt(query.skip) - 1 : 0;
-        var limit = query.limit ? parseInt(query.limit) : 20;
-        var total = 0;
+    var <%- modelName %> = req.app.models.<%- modelName %>;
+    var query = req.query;
+    var skip = query.skip ? parseInt(query.skip) - 1 : 0;
+    var limit = query.limit ? parseInt(query.limit) : 20;
 
-        var opts = {
-            skip: skip,
-            limit: limit,
-            where: {}
-        };
+    var opts = {
+        skip: skip,
+        limit: limit,
+        where: {}
+    };
 
-        <%- modelName %>.count(opts.where, function (err, count) {
-            total = count;
-            <%- modelName %>.all(opts, function (err, <%- itemsName %>) {
-                if (err) {
-                    res.status(400);
-                    return res.json({
-                        status: 400,
-                        error: err
-                    });
-                }
-                res.status(200);
-                res.json({
-                     status: 200,
-                     data: <%- itemsName %>
-                });
+    delete query.skip;
+    delete query.limit;
+    // TODO: it needs implementation
+    _.extend(opts.where, query);
+
+    <%- modelName %>.all(opts, function (err, <%- itemsName %>) {
+        if (err) {
+            res.status(400);
+            return res.json({
+                code: err.code || 400,
+                message: err.message || err
             });
+        }
+        res.status(200);
+        res.json(<%- itemsName %>);
+    });
+});
+
+/**
+ * Count items action, returns amount of <%- itemName %>
+ * Default mapping to GET '~/<%- itemsName %>/count'
+ *
+ * @param {Object} req
+ * @param {Object} res
+ * @param {Function} next
+ **/
+router.get('/count', function (req, res) {
+    var <%- modelName %> = req.app.models.<%- modelName %>;
+    var query = req.query;
+
+    var opts = {
+        where: {}
+    };
+
+    // TODO: it needs implementation
+    _.extend(opts.where, query);
+
+    <%- modelName %>.count(opts.where, function (err, count) {
+        if (err) {
+            res.status(400);
+            return res.json({
+                code: err.code || 400,
+                message: err.message || err
+            });
+        }
+        res.status( 200 );
+        res.json( {
+                count: count
         });
+    });
 });
 
 /**
@@ -73,13 +105,10 @@ router.get('/', function (req, res) {
 * @param {Function} next
 **/
 router.get('/new', function (req, res) {
-        var <%- modelName %> = req.app.models.<%- modelName %>;
-        var <%- itemName %> = new <%- modelName %>(req.body);
-        res.status(200);
-        res.json({
-            status: 200,
-            data: <%- itemName %>.toObject()
-        });
+    var <%- modelName %> = req.app.models.<%- modelName %>;
+    var <%- itemName %> = new <%- modelName %>(req.query);
+    res.status(200);
+    res.json(<%- itemName %>.toObject());
 });
 
 /**
@@ -91,29 +120,26 @@ router.get('/new', function (req, res) {
 * @param {Function} next
 **/
 router.get('/:id', function (req, res) {
-        var <%- modelName %> = req.app.models.<%- modelName %>;
-        <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
-            if (err) {
-                res.status(400);
-                return res.json({
-                    status: 400,
-                    error: err
-                });
-            }
-            if (<%- itemName %>) {
-                res.status(200);
-                res.json({
-                    status: 200,
-                    data: <%- itemName %>.toObject()
-                });
-            } else {
-                res.status(404);
-                res.json({
-                    status: 404,
-                    error: "NotFound"
-                });
-            }
-        });
+    var <%- modelName %> = req.app.models.<%- modelName %>;
+    <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
+        if (err) {
+            res.status(400);
+            return res.json({
+                code: err.code || 400,
+                message: err.message || err
+            });
+        }
+        if (<%- itemName %>) {
+            res.status(200);
+            res.json(<%- itemName %>.toObject());
+        } else {
+            res.status(404);
+            res.json({
+                code: 404,
+                message: "<%- itemsName %> not found"
+            });
+        }
+    });
 });
 
 /**
@@ -125,39 +151,36 @@ router.get('/:id', function (req, res) {
 * @param {Function} next
 **/
 router.put('/:id', function (req, res) {
-        var <%- modelName %> = req.app.models.<%- modelName %>;
-        <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
-            if (err) {
-                res.status(400);
-                return res.json({
-                    status: 400,
-                    error: err
-                });
-            }
-            if (<%- itemName %>) {
-                <%- itemName %>.updateAttributes(req.body, function (err) {
-                    if (err) {
-                        res.status(400);
-                        return res.json({
-                            status: 400,
-                            error: err
-                        });
-                    }
-                    res.status(200);
-                    res.json({
-                        status: 200,
-                        data: <%- itemName %>.toObject()
+    var <%- modelName %> = req.app.models.<%- modelName %>;
+    <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
+        if (err) {
+            res.status(400);
+            return res.json({
+                code: err.code || 400,
+                message: err.message || err
+            });
+        }
+        if (<%- itemName %>) {
+        <%- itemName %>.updateAttributes(req.body, function (err) {
+                if (err) {
+                    res.status(400);
+                    return res.json({
+                        code: err.code || 400,
+                        message: err.message || err
                     });
-                });
+                }
+                res.status(200);
+                res.json(<%- itemName %>.toObject());
+            });
 
-            } else {
-                res.status(404);
-                res.json({
-                    status: 404,
-                    error: "NotFound"
-                });
-            }
-        });
+        } else {
+            res.status(404);
+            res.json({
+                code: 404,
+                message: "<%- itemsName %> not found"
+            });
+        }
+    });
 });
 
 /**
@@ -169,32 +192,29 @@ router.put('/:id', function (req, res) {
 * @param {Function} next
 **/
 router.post('/', function (req, res) {
-        var <%- modelName %> = req.app.models.<%- modelName %>;
-        var <%- itemName %> = new <%- modelName %>(req.body);
-        <%- itemName %>.isValid(function (isValid) {
-            if (!isValid) {
+    var <%- modelName %> = req.app.models.<%- modelName %>;
+    var <%- itemName %> = new <%- modelName %>(req.body);
+    <%- itemName %>.isValid(function (isValid) {
+        if (!isValid) {
+            res.status(400);
+            return res.json({
+                    code: 400,
+                    message: <%- itemName %>.errors
+        });
+        }
+
+        <%- itemName %>.save(function (err) {
+            if (err) {
                 res.status(400);
                 return res.json({
-                    status: 400,
-                    error: <%- itemName %>.errors
+                    code: err.code || 400,
+                    message: err.message || err
                 });
             }
-
-            <%- itemName %>.save(function (err) {
-                if (err) {
-                    res.status(400);
-                    return res.json({
-                        status: 400,
-                        error: err
-                    });
-                }
-                res.status(201);
-                res.json({
-                    status: 201,
-                    data: <%- itemName %>.toObject()
-                });
-            });
+            res.status(201);
+            res.json(<%- itemName %>.toObject());
         });
+    });
 });
 
 /**
@@ -206,38 +226,38 @@ router.post('/', function (req, res) {
 * @param {Function} next
 **/
 router.delete('/:id', function (req, res) {
-        var <%- modelName %> = req.app.models.<%- modelName %>;
-        <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
+    var <%- modelName %> = req.app.models.<%- modelName %>;
+    <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
+        if (err) {
+            res.status(400);
+            return res.json({
+                code: err.code || 400,
+                message: err.message || err
+            });
+        }
+        if (!<%- itemName %>) {
+            res.status(404);
+            return res.json({
+                code: 404,
+                message: '<%- itemsName %> not found'
+            });
+        }
+    <%- itemName %>.destroy(function (err) {
             if (err) {
                 res.status(400);
                 return res.json({
-                    status: 400,
-                    error: err
+                    code: err.code || 400,
+                    message: err.message || err
+                });
+            } else {
+                res.status(204);
+                res.json({
+                    code: 204,
+                    message: '<%- itemsName %> deleted!'
                 });
             }
-            if (!<%- itemName %>) {
-                res.status(404);
-                return res.json({
-                    status: 404,
-                    error: 'NotFound'
-                });
-           }
-            <%- itemName %>.destroy(function (err) {
-                if (err) {
-                    res.status(400);
-                    return res.json({
-                        status: 400,
-                        error: err
-                    });
-                } else {
-                    res.status(204);
-                    res.json({
-                        status: 204,
-                        message: 'Item deleted!'
-                    });
-                }
-            });
         });
+    });
 });
 
 /**
@@ -249,22 +269,22 @@ router.delete('/:id', function (req, res) {
 * @param {Function} next
 **/
 router.delete('/all', function (req, res) {
-        var <%- modelName %> = req.app.models.<%- modelName %>;
-        <%- modelName %>.destroyAll(function (err) {
-            if (err) {
-                res.status(400);
-                return res.json({
-                    status: 400,
-                    error: err
-                });
-            } else {
-                res.status(204);
-                res.json({
-                    status: 204,
-                    message: '<%- itemsName %> deleted'
-                });
-            }
-        });
+    var <%- modelName %> = req.app.models.<%- modelName %>;
+    <%- modelName %>.destroyAll(function (err) {
+        if (err) {
+            res.status(400);
+            return res.json({
+                code: err.code || 400,
+                message: err.message || err
+            });
+        } else {
+            res.status(204);
+            res.json({
+                code: 204,
+                message: '<%- itemsName %> deleted'
+            });
+        }
+    });
 });
 
 module.exports = router;

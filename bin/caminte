@@ -10,6 +10,7 @@ var fs = require('fs');
 var path = require('path');
 var child = require('child_process');
 var exec = child.exec;
+var swagger = require('../lib/swagger');
 var sqlparser = require('../lib/sqlparser');
 var inflection = require('../lib/inflection');
 var pkg = require('../package.json');
@@ -33,6 +34,7 @@ program
     .option('-c, --crud  <crudname>', 'create model and route')
     .option('-d, --dump  <dumpfile>', 'parse sql dump file')
     .option('-t, --tests', 'add tests')
+    .option('-w, --swagger', 'generate swagger.json')
     .option('-f, --force', 'force on non-empty directory')
     .parse(process.argv);
 
@@ -46,7 +48,7 @@ if (!program.adapter) {
 
 if (!program.init && !program.model
     && !program.route && !program.crud
-    && !program.dump) {
+    && !program.dump && !program.swagger) {
     program.help();
 }
 
@@ -136,6 +138,8 @@ if (program.init) {
             // end
         });
     });
+} else if(program.swagger) {
+    console.log('create swagger')
 }
 
 // Create structure
@@ -763,7 +767,6 @@ function mkdir(path, cb) {
 }
 /**
  * Change dir & npm install
- *
  * @param {String} dstpath
  * @param {Function} cb
  */
@@ -781,19 +784,31 @@ function npmInstall(dstpath, cb) {
 
 /**
  * Check if project available.
- *
- * @param {String} str
+ * @param {String} project_path
  */
-function checkIsProject(path) {
-    existsFile(path + 'package.json', function (exists) {
+function checkIsProject(project_path) {
+    existsFile(project_path + 'package.json', function (exists) {
         if (!exists) {
             abort('package.json not found');
         }
     });
 }
 
-function loadPackageJson(dstpath) {
-    var pkgFile = fs.readFileSync(dstpath + 'package.json');
+/**
+ * Load package json
+ * @param {String} dst_path
+ */
+function loadPackageJson(dst_path) {
+    var pkgFile = fs.readFileSync(dst_path + 'package.json');
+    return JSON.parse(pkgFile);
+}
+
+/**
+ * Load swagger json
+ * @param {String} dst_path
+ */
+function loadSwaggerJson(dst_path) {
+    var pkgFile = fs.readFileSync(dst_path + 'swagger.json');
     return JSON.parse(pkgFile);
 }
 
@@ -815,7 +830,6 @@ function confirm(msg, callback) {
 
 /**
  * Exit with the given `str`.
- *
  * @param {String} str
  */
 function abort(str) {
