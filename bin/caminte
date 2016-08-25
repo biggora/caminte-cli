@@ -140,6 +140,7 @@ if (program.init) {
     });
 } else if(program.swagger) {
     console.log('create swagger')
+    swagger.createSwagger(destination_path);
 }
 
 // Create structure

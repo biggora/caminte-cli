@@ -2,7 +2,7 @@
   "name": "caminte-cli",
   "description": "Command line interface for CaminteJS ORM",
   "homepage": "http://camintejs.com/",
-  "version": "1.0.4",
+  "version": "1.1.0",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -12,7 +12,7 @@
     "url": "https://github.com/biggora/caminte-cli/issues"
   },
   "author": {
-    "name": "Aleksej Gordejev",
+    "name": "Alexey Gordeyev",
     "email": "aleksej@gordejev.lv",
     "url": "http://www.gordejev.lv"
   },

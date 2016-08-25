@@ -63,7 +63,8 @@ will provide the following routes:
 
     method        route                    action 
     ------------------------------------------------------------
-    GET           /:table                  index    
+    GET           /:table                  index  
+    GET           /:table/count            count     
     GET           /:table/new              new     
     GET           /:table/:id              show       
     POST          /:table                  create    
