@@ -24,6 +24,7 @@
     -d, --dump  <dumpfile>            parse sql dump file
     -t, --tests                       add tests
     -f, --force                       force on non-empty directory
+    -w, --swagger                     generate swagger.json
 
 ### Usage with Express
 
@@ -95,7 +96,11 @@ On initialization directories tree generated, like that:
     |   |   `-- ...
     |   `-- tests.js
     `-- database.js
+    
+    
+### Create swagger.json file:
 
+    $ caminte -w
 
 ### CaminteJS ORM db adapters:
     mysql, sqlite3, postgres, mongodb, redis, neo4j, riak, couchdb, rethinkdb, tingodb, arangodb
