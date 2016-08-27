@@ -46,7 +46,7 @@ router.get('/', function (req, res) {
 
     delete query.skip;
     delete query.limit;
-    // TODO: it needs implementation
+    // TODO: it needs implementation for search
     _.extend(opts.where, query);
 
     <%- modelName %>.all(opts, function (err, <%- itemsName %>) {
