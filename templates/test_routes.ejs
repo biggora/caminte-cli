@@ -61,6 +61,18 @@ describe('<%- modelName %> routes:', function () {
             });
     });
 
+    it('<%- itemsName %>#count', function (done) {
+        request(app)
+            .get('/<%- itemsName %>/count')
+            // .field('name', 'my awesome avatar')
+            .set('Accept', 'application/json')
+            .expect(200)
+            .end(function (err, res) {
+                if (err) return done(err);
+                res.body.should.be.have.property('count');
+                done();
+            });
+    });
 
     it('<%- itemsName %>#show', function (done) {
         request(app)
@@ -69,8 +81,8 @@ describe('<%- modelName %> routes:', function () {
             .expect(200)
             .end(function (err, res) {
                 if (err) return done(err);
-                res.body.should.be.have.property('data');
-                <%- itemName %> = res.body.data;
+                res.body.should.be('object');
+                <%- itemName %> = res.body;
                 done();
             });
     });
@@ -95,7 +107,7 @@ describe('<%- modelName %> routes:', function () {
             .expect(204)
             .end(function(err, res){
                 if (err) return done(err);
-                // res.body.should.be.have.property('data');
+                res.body.should.be('object');
                 done();
             });
     });
@@ -104,10 +116,10 @@ describe('<%- modelName %> routes:', function () {
         request(app)
             .delete('/<%- itemsName %>/all')
             .set('Accept', 'application/json')
-            .expect(204)
+            .expect(200)
             .end(function(err, res){
                 if (err) return done(err);
-                // res.body.should.be.have.property('data');
+                res.body.should.be('object');
                 done();
             });
     });
