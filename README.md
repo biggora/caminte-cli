@@ -70,7 +70,7 @@ will provide the following routes:
     POST          /:table                  create    
     PUT           /:table/:id              update      
     DELETE        /:table/:id              destroy 
-    DELETE        /:table/all              truncate
+    DELETE        /:table/truncate         truncate
 
 
 ### Directory structure
