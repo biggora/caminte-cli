@@ -48,6 +48,6 @@ module.exports.init = function (app) {
      return app;
 }
 
-module.exports.relations = function (app.models) {
-     require(modelDir + '/relations').load(app.models);
+module.exports.relations = function (models) {
+     require(modelDir + '/relations').load(models);
 };
