@@ -632,6 +632,7 @@ function createApplicationAt(dstpath) {
             }
 
             write( dstpath + 'package.json', JSON.stringify( pkgProject, null, 4 ) );
+            copy( __dirname + '/../templates/relations.ejs', dstpath + 'models/relations.js' );
             copy( __dirname + '/../templates/tests.js', dstpath + 'test/tests.js' );
 
             existsFile( dstpath + 'models.js', function (mexists) {

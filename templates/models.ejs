@@ -24,11 +24,15 @@ module.exports.init = function (app) {
          app.models = {};
       }
 
+      var count = modelList.length;
       for(var m = 0; m < modelList.length; m++) {
           var modelFile = modelList[m];
-          if (/\.js$/i.test(modelFile)) {
+          if (/Model\.js$/i.test(modelFile)) {
              var modelName = modelFile.replace(/\.js$/i, '');
              app.models[modelName] = require(modelDir + '/' + modelName)(schema);
+             if(--count === 0) {
+                exports.relations();
+             }
           }
       }
 
@@ -43,3 +47,7 @@ module.exports.init = function (app) {
      }
      return app;
 }
+
+module.exports.relations = function (app.models) {
+     require(modelDir + '/relations').load(app.models);
+};

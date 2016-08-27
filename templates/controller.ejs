@@ -33,7 +33,7 @@ if (middleware) {
 * @param {Function} next
 **/
 router.get('/', function (req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>;
+    var <%- modelName %> = req.app.models.<%- modelName %>Model;
     var query = req.query;
     var skip = query.skip ? parseInt(query.skip) - 1 : 0;
     var limit = query.limit ? parseInt(query.limit) : 20;
@@ -71,7 +71,7 @@ router.get('/', function (req, res) {
  * @param {Function} next
  **/
 router.get('/count', function (req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>;
+    var <%- modelName %> = req.app.models.<%- modelName %>Model;
     var query = req.query;
 
     var opts = {
@@ -105,7 +105,7 @@ router.get('/count', function (req, res) {
 * @param {Function} next
 **/
 router.get('/new', function (req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>;
+    var <%- modelName %> = req.app.models.<%- modelName %>Model;
     var <%- itemName %> = new <%- modelName %>(req.query);
 
     <%- itemName %>.isValid(function (isValid) {
@@ -131,7 +131,7 @@ router.get('/new', function (req, res) {
 * @param {Function} next
 **/
 router.get('/:id', function (req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>;
+    var <%- modelName %> = req.app.models.<%- modelName %>Model;
     <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
         if (err) {
             res.status(400);
@@ -163,7 +163,7 @@ router.get('/:id', function (req, res) {
 **/
 router.put('/:id', function (req, res) {
     var query = req.body;
-    var <%- modelName %> = req.app.models.<%- modelName %>;
+    var <%- modelName %> = req.app.models.<%- modelName %>Model;
     <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
         if (err) {
             res.status(400);
@@ -216,7 +216,7 @@ router.put('/:id', function (req, res) {
 * @param {Function} next
 **/
 router.post('/', function (req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>;
+    var <%- modelName %> = req.app.models.<%- modelName %>Model;
     var <%- itemName %> = new <%- modelName %>(req.body);
     <%- itemName %>.isValid(function (isValid) {
         if (!isValid) {
@@ -250,7 +250,7 @@ router.post('/', function (req, res) {
 * @param {Function} next
 **/
 router.delete('/:id', function (req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>;
+    var <%- modelName %> = req.app.models.<%- modelName %>Model;
     <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
         if (err) {
             res.status(400);
@@ -292,7 +292,7 @@ router.delete('/:id', function (req, res) {
 * @param {Function} next
 **/
 router.delete('/truncate', function (req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>;
+    var <%- modelName %> = req.app.models.<%- modelName %>Model;
     <%- modelName %>.destroyAll(function (err) {
         if (err) {
             res.status(400);
