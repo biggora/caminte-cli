@@ -109,6 +109,7 @@ describe('<%- modelName %> routes:', function () {
             .end(function(err, res){
                 if (err) return done(err);
                 res.body.should.be.object;
+                res.body.should.be.have.property('message');
                 done();
             });
     });
@@ -117,10 +118,11 @@ describe('<%- modelName %> routes:', function () {
         request(app)
             .delete('/<%- itemsName %>/truncate')
             .set('Accept', 'application/json')
-            .expect(200)
+            .expect(204)
             .end(function(err, res){
                 if (err) return done(err);
                 res.body.should.be.object;
+                res.body.should.be.have.property('message');
                 done();
             });
     });
