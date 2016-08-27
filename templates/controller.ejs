@@ -291,7 +291,7 @@ router.delete('/:id', function (req, res) {
 * @param {Object} res
 * @param {Function} next
 **/
-router.delete('/all', function (req, res) {
+router.delete('/truncate', function (req, res) {
     var <%- modelName %> = req.app.models.<%- modelName %>;
     <%- modelName %>.destroyAll(function (err) {
         if (err) {
@@ -303,8 +303,7 @@ router.delete('/all', function (req, res) {
         } else {
             res.status(204);
             res.json({
-                code: 204,
-                message: '<%- itemsName %> deleted'
+                message: 'All <%- itemsName %> deleted'
             });
         }
     });
