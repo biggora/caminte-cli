@@ -162,7 +162,7 @@ function createApplication(dstpath) {
 // Generate Model
 function createModel(root, cb) {
     var modelName = (program.model || program.crud).toLowerCase().singularize().capitalize();
-    var pathToModel = path.resolve( root + '/' + modelName + '.js' );
+    var pathToModel = path.resolve( root + '/' + modelName + 'Model.js' );
     existsFile( pathToModel, function (empty) {
         if ( !empty || program.force ) {
             createModelAt( root, modelName );
@@ -224,8 +224,8 @@ function createRoute(root, cb) {
  */
 function createModelAt(pathToModels, modelName) {
     mkdir( pathToModels );
-    var modelFile = path.normalize( pathToModels + '/' + modelName + '.js' );
-    var fields = parseFields();
+    var modelFile = path.normalize( pathToModels + '/' + modelName + 'Model.js' );
+    var fields = parseFields( modelName );
     var modelFileData = modelTemplate( {
         modelName: modelName,
         fields: fields.join( ',\n' ),
@@ -266,7 +266,7 @@ function createCtrAt(pathToCtr, ctrName, modelName) {
 }
 
 // parse Fields
-function parseFields() {
+function parseFields(modelName) {
     var fields = [], model = (program.model || program.crud);
     for ( var i in process.argv ) {
         if ( i > 3 ) {
@@ -274,7 +274,7 @@ function parseFields() {
             if ( /^[-]+/.test( fpret ) ) {
                 continue;
             }
-            if ( model === fpret ) {
+            if ( model === fpret || modelName === fpret ) {
                 continue;
             }
             var fdata = fpret.split( ':' );
