@@ -115,8 +115,8 @@ router.get('/new', function (req, res) {
         } else {
             res.status(405);
             return res.json({
-                code: err.code || 405,
-                message: err.message || err
+                code: 405,
+                message: <%- itemName %>.errors
             });
         }
     });
@@ -147,7 +147,7 @@ router.get('/:id', function (req, res) {
             res.status(404);
             res.json({
                 code: 404,
-                message: "<%- itemsName %> not found"
+                message: '<%- itemsName %> not found'
             });
         }
     });
@@ -201,7 +201,7 @@ router.put('/:id', function (req, res) {
             res.status(404);
             res.json({
                 code: 404,
-                message: "<%- itemsName %> not found"
+                message: '<%- itemsName %> not found'
             });
         }
     });
@@ -224,7 +224,7 @@ router.post('/', function (req, res) {
             return res.json({
                     code: 400,
                     message: <%- itemName %>.errors
-        });
+            });
         }
 
         <%- itemName %>.save(function (err) {
