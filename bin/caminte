@@ -196,7 +196,7 @@ function createRoute(root, cb) {
     var pathToCtr = path.resolve( root + '/' + ctrName + '.js' );
     existsFile( pathToCtr, function (empty) {
         if ( !empty || program.force ) {
-            createCtrAt( root, ctrName );
+            createCtrAt( root, ctrName, modelName );
             if ( program.tests ) {
                 createRoutesTestAt( './test', ctrName, modelName );
             }
