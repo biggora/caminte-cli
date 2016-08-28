@@ -126,7 +126,7 @@ if ( program.init ) {
 } else if ( program.model ) {
     program.model = program.model.toLowerCase().singularize();
     destination_path += 'models';
-    createModel( destination_path );
+    createModel( destination_path, program.model );
 } else if ( program.route ) {
     program.route = program.route.toLowerCase().pluralize();
     destination_path += 'routes';
@@ -135,7 +135,7 @@ if ( program.init ) {
     program.crud = program.crud.toLowerCase().pluralize();
     createRoute( destination_path + 'routes', function (modelName) {
         program.model = modelName;
-        createModel( destination_path + 'models', function () {
+        createModel( destination_path + 'models', modelName, function () {
             // end
         } );
     } );
@@ -161,8 +161,8 @@ function createApplication(dstpath) {
 }
 
 // Generate Model
-function createModel(root, cb) {
-    var modelName = (program.model || program.crud).toLowerCase().singularize().capitalize();
+function createModel(root, modelName, cb) {
+    var modelName = (modelName || program.model || program.crud).toLowerCase().singularize().capitalize();
     var pathToModel = path.resolve( root + '/' + modelName + 'Model.js' );
     existsFile( pathToModel, function (empty) {
         if ( !empty || program.force ) {
