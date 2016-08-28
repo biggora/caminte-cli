@@ -108,18 +108,8 @@ router.get('/new', function (req, res) {
     var <%- modelName %> = req.app.models.<%- modelName %>Model;
     var <%- itemName %> = new <%- modelName %>(req.query);
 
-    <%- itemName %>.isValid(function (isValid) {
-        if(isValid) {
-            res.status(200);
-            res.json(<%- itemName %>.toObject());
-        } else {
-            res.status(405);
-            return res.json({
-                code: 405,
-                message: <%- itemName %>.errors
-            });
-        }
-    });
+    res.status(200);
+    res.json(<%- itemName %>.toObject());
 });
 
 /**
