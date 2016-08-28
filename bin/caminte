@@ -133,7 +133,8 @@ if ( program.init ) {
     createRoute( destination_path );
 } else if ( program.crud ) {
     program.crud = program.crud.toLowerCase().pluralize();
-    createRoute( destination_path + 'routes', function () {
+    createRoute( destination_path + 'routes', function (modelName) {
+        program.model = modelName;
         createModel( destination_path + 'models', function () {
             // end
         } );
@@ -199,7 +200,7 @@ function createRoute(root, cb) {
             if ( program.tests ) {
                 createRoutesTestAt( './test', ctrName, modelName );
             }
-            return cb && cb();
+            return cb && cb( modelName );
         } else {
             confirm( '   routes is exists, continue? [y/N] ', function (ok) {
                 if ( ok ) {
@@ -207,7 +208,7 @@ function createRoute(root, cb) {
                     if ( program.tests ) {
                         createRoutesTestAt( './test', ctrName, modelName );
                     }
-                    return cb && cb();
+                    return cb && cb( modelName );
                 } else {
                     abort( 'aborting' );
                 }
