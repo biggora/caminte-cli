@@ -695,20 +695,6 @@ function copy_template(source, target) {
 }
 
 /**
- * Copy templates from `source` to `target`.
- *
- * @param {String} source
- * @param {String} target
- */
-function copy_templates(tplEngine, target) {
-    var source = path.join(__dirname, '..', 'templates', tplEngine);
-    var sources = fs.readdirSync(source);
-    sources.forEach(function (srcfile) {
-        copy_template(tplEngine + '/' + srcfile, target + '/' + srcfile)
-    });
-}
-
-/**
  * Check if the given directory `path` is empty.
  *
  * @param {String} path
@@ -767,6 +753,7 @@ function mkdir(path, cb) {
         }
     });
 }
+
 /**
  * Change dir & npm install
  * @param {String} dstpath
