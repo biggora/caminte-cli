@@ -2,7 +2,7 @@
     "name": "caminte-cli",
     "description": "Command line interface for CaminteJS ORM",
     "homepage": "http://camintejs.com/",
-    "version": "1.2.1",
+    "version": "1.2.2",
     "license": "MIT",
     "repository": {
         "type": "git",
