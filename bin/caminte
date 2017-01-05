@@ -16,8 +16,6 @@ var inflection = require('../lib/inflection');
 var pkg = require('../package.json');
 var version = pkg.version;
 
-// Path
-var destination_path = './';
 
 function list(val) {
     return val.split(/\s+/).map(String);
@@ -36,7 +34,13 @@ program
     .option('-t, --tests', 'add tests')
     .option('-w, --swagger', 'generate swagger.json')
     .option('-f, --force', 'force on non-empty directory')
+    .option('-p, --destination-path <destinationPath>', 'destination path where models and routes will be created', './')
     .parse(process.argv);
+
+// Path
+var destination_path = program.destinationPath;
+// Add trailing slash if not present
+destination_path = destination_path + (destination_path.slice(-1) !== '/' ? '/' : '');
 
 // end-of-line code
 var eol = os.EOL;
