@@ -14,17 +14,18 @@
 
   Options:
 
-    -h, --help                        output usage information
-    -V, --version                     output the version number
-    -i, --init                        create structure and config
-    -a, --adapter [name]              database adapter (mysql|redis|etc...)
-    -m, --model <modelname> [fields]  create data model
-    -r, --route <routename>           create data routes
-    -c, --crud  <crudname>  [fields]  create model and route
-    -d, --dump  <dumpfile>            parse sql dump file
-    -t, --tests                       add tests
-    -f, --force                       force on non-empty directory
-    -w, --swagger                     generate swagger.json
+    -h, --help                                output usage information
+    -V, --version                             output the version number
+    -i, --init                                create structure and config
+    -a, --adapter [name]                      database adapter (mysql|redis|etc...)
+    -m, --model <modelname> [fields]          create data model
+    -r, --route <routename>                   create data routes
+    -c, --crud  <crudname>  [fields]          create model and route
+    -d, --dump  <dumpfile>                    parse sql dump file
+    -t, --tests                               add tests
+    -f, --force                               force on non-empty directory
+    -p, --destination-path <destinationPath>  change destination path
+    -w, --swagger                             generate swagger.json
 
 ### Usage with Express
 
