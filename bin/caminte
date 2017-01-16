@@ -484,7 +484,13 @@ function createApplicationAt(dstpath) {
                 mkdir(dstpath + 'models', cb);
             },
             function (cb) {
-                mkdir(dstpath + 'routes', cb);
+                existsFile(dstpath + 'controllers', function (exists) {
+                    if (!exists) {
+                        mkdir(dstpath + 'routes', cb);
+                    } else {
+                        cb && cb();
+                    }
+                });
             },
             function (cb) {
                 mkdir(dstpath + 'test', cb);
@@ -492,7 +498,7 @@ function createApplicationAt(dstpath) {
         ], function () {
 
             if (!pkgProject.dependencies['caminte']) {
-                pkgProject.dependencies['caminte'] = '^0.2.13'
+                pkgProject.dependencies['caminte'] = '^0.3.2'
             }
 
             if (!pkgProject.dependencies['underscore']) {
