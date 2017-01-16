@@ -636,6 +636,10 @@ function createApplicationAt(dstpath) {
                     }
             }
 
+            _.extend(pkgProject.dependencies, {
+                boom: '^4.2.0'
+            });
+
             write(dstpath + 'package.json', JSON.stringify(pkgProject, null, 4));
             copy(__dirname + '/../templates/relations.ejs', dstpath + 'models/relations.js');
             copy(__dirname + '/../templates/tests.js', dstpath + 'test/tests.js');

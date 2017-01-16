@@ -7,12 +7,13 @@
  **/
 var _ = require('underscore');
 var express = require('express');
+var boom = require('boom');
 var router = express.Router({mergeParams: true});
 var middleware;
 
 /* params router level */
-router.param('id', function (req, res, next, id) {
-   if (/<%- regexp %>/.test(id)) {
+router.param('<%- itemName %>_id', function (req, res, next, <%- itemName %>_id) {
+   if (/<%- regexp %>/.test(<%- itemName %>_id)) {
       next();
    } else {
       next('route');
@@ -32,7 +33,7 @@ if (middleware) {
 * @param {Object} res
 * @param {Function} next
 **/
-router.get('/', function (req, res) {
+function list(req, res) {
     var <%- modelName %> = req.app.models.<%- modelName %>Model;
     var query = req.query;
     var skip = query.skip ? parseInt(query.skip) - 1 : 0;
@@ -51,16 +52,15 @@ router.get('/', function (req, res) {
 
     <%- modelName %>.all(opts, function (err, <%- itemsName %>) {
         if (err) {
-            res.status(400);
-            return res.json({
-                code: err.code || 400,
-                message: err.message || err
-            });
+           res.status(400);
+           return res.json(boom.badRequest(err.message || err));
         }
         res.status(200);
         res.json(<%- itemsName %>);
     });
-});
+};
+
+router.get('/', list);
 
 /**
  * Count items action, returns amount of <%- itemName %>
@@ -70,7 +70,7 @@ router.get('/', function (req, res) {
  * @param {Object} res
  * @param {Function} next
  **/
-router.get('/count', function (req, res) {
+function count(req, res) {
     var <%- modelName %> = req.app.models.<%- modelName %>Model;
     var query = req.query;
 
@@ -83,18 +83,17 @@ router.get('/count', function (req, res) {
 
     <%- modelName %>.count(opts.where, function (err, count) {
         if (err) {
-            res.status(400);
-            return res.json({
-                code: err.code || 400,
-                message: err.message || err
-            });
+           res.status(400);
+           return res.json(boom.badRequest(err.message || err));
         }
         res.status( 200 );
         res.json( {
-                count: count
+           count: count
         });
-    });
-});
+   });
+}
+
+router.get('/count', count);
 
 /**
 * New action, returns new a single <%- itemName %>
@@ -104,13 +103,14 @@ router.get('/count', function (req, res) {
 * @param {Object} res
 * @param {Function} next
 **/
-router.get('/new', function (req, res) {
+function empty(req, res) {
     var <%- modelName %> = req.app.models.<%- modelName %>Model;
     var <%- itemName %> = new <%- modelName %>(req.query);
-
     res.status(200);
     res.json(<%- itemName %>.toObject());
-});
+}
+
+router.get('/new', empty);
 
 /**
 * Show action, returns shows a single <%- itemName %>
@@ -120,28 +120,24 @@ router.get('/new', function (req, res) {
 * @param {Object} res
 * @param {Function} next
 **/
-router.get('/:id', function (req, res) {
+function show(req, res) {
     var <%- modelName %> = req.app.models.<%- modelName %>Model;
-    <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
+    <%- modelName %>.findById(req.params.<%- itemName %>_id, function (err, <%- itemName %>) {
         if (err) {
             res.status(400);
-            return res.json({
-                code: err.code || 400,
-                message: err.message || err
-            });
+            return res.json(boom.badRequest(err.message || err));
         }
         if (<%- itemName %>) {
             res.status(200);
             res.json(<%- itemName %>.toObject());
         } else {
             res.status(404);
-            res.json({
-                code: 404,
-                message: '<%- itemsName %> not found'
-            });
+            res.json(boom.notFound('<%- itemName %> not found'));
         }
     });
-});
+}
+
+router.get('/:<%- itemName %>_id', show);
 
 /**
 * Update action, updates a single <%- itemName %>
@@ -151,16 +147,13 @@ router.get('/:id', function (req, res) {
 * @param {Object} res
 * @param {Function} next
 **/
-router.put('/:id', function (req, res) {
+function update(req, res) {
     var query = req.body;
     var <%- modelName %> = req.app.models.<%- modelName %>Model;
-    <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
+    <%- modelName %>.findById(req.params.<%- itemName %>_id, function (err, <%- itemName %>) {
         if (err) {
             res.status(400);
-            return res.json({
-                code: err.code || 400,
-                message: err.message || err
-            });
+            return res.json(boom.badRequest(err.message || err));
         }
         if (<%- itemName %>) {
 
@@ -171,31 +164,26 @@ router.put('/:id', function (req, res) {
                     <%- itemName %>.updateAttributes(req.body, function (err) {
                         if (err) {
                             res.status(400);
-                            return res.json({
-                                code: err.code || 400,
-                                message: err.message || err
-                            });
+                            return res.json(boom.badRequest(err.message || err));
                         }
                         res.status(200);
                         res.json(<%- itemName %>.toObject());
                     });
                 } else {
-                    res.status(405);
-                    return res.json({
-                        code: 405,
-                        message: <%- itemName %>.errors
-                    });
+                    res.status(422);
+                    var error = boom.badData('data is bad you should fix it');
+                    error.attributes = <%- itemName %>.errors;
+                    return res.json(error);
                 }
             });
         } else {
             res.status(404);
-            res.json({
-                code: 404,
-                message: '<%- itemsName %> not found'
-            });
+            res.json(boom.notFound('<%- itemName %> not found'));
         }
     });
-});
+}
+
+router.put('/:<%- itemName %>_id', update);
 
 /**
 * Create action, creates a single <%- itemName %>
@@ -205,31 +193,28 @@ router.put('/:id', function (req, res) {
 * @param {Object} res
 * @param {Function} next
 **/
-router.post('/', function (req, res) {
+function create(req, res) {
     var <%- modelName %> = req.app.models.<%- modelName %>Model;
     var <%- itemName %> = new <%- modelName %>(req.body);
     <%- itemName %>.isValid(function (isValid) {
         if (!isValid) {
-            res.status(400);
-            return res.json({
-                    code: 400,
-                    message: <%- itemName %>.errors
-            });
+           res.status(422);
+           var error = boom.badData('data is bad you should fix it');
+           error.attributes = <%- itemName %>.errors;
+           return res.json(error);
         }
-
         <%- itemName %>.save(function (err) {
             if (err) {
-                res.status(400);
-                return res.json({
-                    code: err.code || 400,
-                    message: err.message || err
-                });
+               res.status(400);
+               return res.json(boom.badRequest(err.message || err));
             }
             res.status(201);
             res.json(<%- itemName %>.toObject());
         });
-    });
-});
+   });
+}
+
+router.post('/', create);
 
 /**
 * Delete action, deletes a single <%- itemName %>
@@ -239,39 +224,32 @@ router.post('/', function (req, res) {
 * @param {Object} res
 * @param {Function} next
 **/
-router.delete('/:id', function (req, res) {
+function delete(req, res) {
     var <%- modelName %> = req.app.models.<%- modelName %>Model;
-    <%- modelName %>.findById(req.params.id, function (err, <%- itemName %>) {
+    <%- modelName %>.findById(req.params.<%- itemName %>_id, function (err, <%- itemName %>) {
         if (err) {
             res.status(400);
-            return res.json({
-                code: err.code || 400,
-                message: err.message || err
-            });
+            return res.json(boom.badRequest(err.message || err));
         }
         if (!<%- itemName %>) {
             res.status(404);
-            return res.json({
-                code: 404,
-                message: '<%- itemsName %> not found'
-            });
+            return res.json(boom.notFound('<%- itemName %> not found'));
         }
         <%- itemName %>.destroy(function (err) {
             if (err) {
-                res.status(400);
-                return res.json({
-                    code: err.code || 400,
-                    message: err.message || err
-                });
+               res.status(400);
+               return res.json(boom.badRequest(err.message || err));
             } else {
-                res.status(204);
-                res.json({
-                    message: '<%- itemsName %> deleted!'
-                });
+               res.status(204);
+               res.json({
+                  message: '<%- itemsName %> deleted!'
+               });
             }
         });
     });
-});
+}
+
+router.delete('/:<%- itemName %>_id', delete);
 
 /**
 * Delete action, deletes a all <%- itemName %>s
@@ -281,22 +259,22 @@ router.delete('/:id', function (req, res) {
 * @param {Object} res
 * @param {Function} next
 **/
-router.delete('/truncate', function (req, res) {
+function truncate(req, res) {
     var <%- modelName %> = req.app.models.<%- modelName %>Model;
     <%- modelName %>.destroyAll(function (err) {
         if (err) {
-            res.status(400);
-            return res.json({
-                code: err.code || 400,
-                message: err.message || err
-            });
+          res.status(400);
+          return res.json(boom.badRequest(err.message || err));
         } else {
-            res.status(204);
-            res.json({
-                message: 'All <%- itemsName %> deleted'
-            });
+          res.status(204);
+          res.json({
+            statusCode: 204,
+            message: 'All <%- itemsName %> deleted'
+          });
         }
     });
-});
+}
+
+router.delete('/truncate', truncate);
 
 module.exports = router;
