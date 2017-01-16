@@ -53,7 +53,7 @@ function list(req, res) {
     <%- modelName %>.all(opts, function (err, <%- itemsName %>) {
         if (err) {
            res.status(400);
-           return res.json(boom.badRequest(err.message || err));
+           return res.json(boom.badRequest(err.message || err).output.payload);
         }
         res.status(200);
         res.json(<%- itemsName %>);
@@ -84,7 +84,7 @@ function count(req, res) {
     <%- modelName %>.count(opts.where, function (err, count) {
         if (err) {
            res.status(400);
-           return res.json(boom.badRequest(err.message || err));
+           return res.json(boom.badRequest(err.message || err).output.payload);
         }
         res.status( 200 );
         res.json( {
@@ -125,14 +125,14 @@ function show(req, res) {
     <%- modelName %>.findById(req.params.<%- itemName %>_id, function (err, <%- itemName %>) {
         if (err) {
             res.status(400);
-            return res.json(boom.badRequest(err.message || err));
+            return res.json(boom.badRequest(err.message || err).output.payload);
         }
         if (<%- itemName %>) {
             res.status(200);
             res.json(<%- itemName %>.toObject());
         } else {
             res.status(404);
-            res.json(boom.notFound('<%- itemName %> not found'));
+            res.json(boom.notFound('<%- itemName %> not found').output.payload);
         }
     });
 }
@@ -153,7 +153,7 @@ function update(req, res) {
     <%- modelName %>.findById(req.params.<%- itemName %>_id, function (err, <%- itemName %>) {
         if (err) {
             res.status(400);
-            return res.json(boom.badRequest(err.message || err));
+            return res.json(boom.badRequest(err.message || err).output.payload);
         }
         if (<%- itemName %>) {
 
@@ -164,21 +164,21 @@ function update(req, res) {
                     <%- itemName %>.updateAttributes(req.body, function (err) {
                         if (err) {
                             res.status(400);
-                            return res.json(boom.badRequest(err.message || err));
+                            return res.json(boom.badRequest(err.message || err).output.payload);
                         }
                         res.status(200);
                         res.json(<%- itemName %>.toObject());
                     });
                 } else {
                     res.status(422);
-                    var error = boom.badData('data is bad you should fix it');
+                    var error = boom.badData('data is bad you should fix it').output.payload;
                     error.attributes = <%- itemName %>.errors;
                     return res.json(error);
                 }
             });
         } else {
             res.status(404);
-            res.json(boom.notFound('<%- itemName %> not found'));
+            res.json(boom.notFound('<%- itemName %> not found').output.payload);
         }
     });
 }
@@ -199,14 +199,14 @@ function create(req, res) {
     <%- itemName %>.isValid(function (isValid) {
         if (!isValid) {
            res.status(422);
-           var error = boom.badData('data is bad you should fix it');
+           var error = boom.badData('data is bad you should fix it').output.payload;
            error.attributes = <%- itemName %>.errors;
            return res.json(error);
         }
         <%- itemName %>.save(function (err) {
             if (err) {
                res.status(400);
-               return res.json(boom.badRequest(err.message || err));
+               return res.json(boom.badRequest(err.message || err).output.payload);
             }
             res.status(201);
             res.json(<%- itemName %>.toObject());
@@ -224,21 +224,21 @@ router.post('/', create);
 * @param {Object} res
 * @param {Function} next
 **/
-function delete(req, res) {
+function destroy(req, res) {
     var <%- modelName %> = req.app.models.<%- modelName %>Model;
     <%- modelName %>.findById(req.params.<%- itemName %>_id, function (err, <%- itemName %>) {
         if (err) {
             res.status(400);
-            return res.json(boom.badRequest(err.message || err));
+            return res.json(boom.badRequest(err.message || err).output.payload);
         }
         if (!<%- itemName %>) {
             res.status(404);
-            return res.json(boom.notFound('<%- itemName %> not found'));
+            return res.json(boom.notFound('<%- itemName %> not found').output.payload);
         }
         <%- itemName %>.destroy(function (err) {
             if (err) {
                res.status(400);
-               return res.json(boom.badRequest(err.message || err));
+               return res.json(boom.badRequest(err.message || err).output.payload);
             } else {
                res.status(204);
                res.json({
@@ -249,7 +249,7 @@ function delete(req, res) {
     });
 }
 
-router.delete('/:<%- itemName %>_id', delete);
+router.delete('/:<%- itemName %>_id', destroy);
 
 /**
 * Delete action, deletes a all <%- itemName %>s
@@ -264,7 +264,7 @@ function truncate(req, res) {
     <%- modelName %>.destroyAll(function (err) {
         if (err) {
           res.status(400);
-          return res.json(boom.badRequest(err.message || err));
+          return res.json(boom.badRequest(err.message || err).output.payload);
         } else {
           res.status(204);
           res.json({

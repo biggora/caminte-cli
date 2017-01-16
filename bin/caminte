@@ -498,7 +498,7 @@ function createApplicationAt(dstpath) {
         ], function () {
 
             if (!pkgProject.dependencies['caminte']) {
-                pkgProject.dependencies['caminte'] = '^0.3.2'
+                pkgProject.dependencies['caminte'] = '^0.3.1'
             }
 
             if (!pkgProject.dependencies['underscore']) {
