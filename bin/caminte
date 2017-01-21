@@ -497,12 +497,10 @@ function createApplicationAt(dstpath) {
             }
         ], function () {
 
-            if (!pkgProject.dependencies['caminte']) {
-                pkgProject.dependencies['caminte'] = '^0.3.1'
-            }
+            pkgProject.dependencies['caminte'] = '^0.3.3';
 
             if (!pkgProject.dependencies['underscore']) {
-                pkgProject.dependencies['underscore'] = '^1.8.3'
+                pkgProject.dependencies['underscore'] = '^1.8.3';
             }
 
             var devDep = {
