@@ -7,6 +7,7 @@
  **/
 var _ = require('underscore');
 var express = require('express');
+var caminte = require('caminte');
 var boom = require('boom');
 var router = express.Router({mergeParams: true});
 var middleware;
@@ -34,7 +35,7 @@ if (middleware) {
 * @param {Function} next
 **/
 function list(req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>Model;
+    var <%- modelName %> = caminte.model('<%- modelName %>');
     var query = req.query;
     var skip = query.skip ? parseInt(query.skip) - 1 : 0;
     var limit = query.limit ? parseInt(query.limit) : 20;
@@ -71,7 +72,7 @@ router.get('/', list);
  * @param {Function} next
  **/
 function count(req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>Model;
+    var <%- modelName %> = caminte.model('<%- modelName %>');
     var query = req.query;
 
     var opts = {
@@ -104,7 +105,7 @@ router.get('/count', count);
 * @param {Function} next
 **/
 function empty(req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>Model;
+    var <%- modelName %> = caminte.model('<%- modelName %>');
     var <%- itemName %> = new <%- modelName %>(req.query);
     res.status(200);
     res.json(<%- itemName %>.toObject());
@@ -121,7 +122,7 @@ router.get('/new', empty);
 * @param {Function} next
 **/
 function show(req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>Model;
+    var <%- modelName %> = caminte.model('<%- modelName %>');
     <%- modelName %>.findById(req.params.<%- itemName %>_id, function (err, <%- itemName %>) {
         if (err) {
             res.status(400);
@@ -149,7 +150,7 @@ router.get('/:<%- itemName %>_id', show);
 **/
 function update(req, res) {
     var query = req.body;
-    var <%- modelName %> = req.app.models.<%- modelName %>Model;
+    var <%- modelName %> = caminte.model('<%- modelName %>');
     <%- modelName %>.findById(req.params.<%- itemName %>_id, function (err, <%- itemName %>) {
         if (err) {
             res.status(400);
@@ -194,7 +195,7 @@ router.put('/:<%- itemName %>_id', update);
 * @param {Function} next
 **/
 function create(req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>Model;
+    var <%- modelName %> = caminte.model('<%- modelName %>');
     var <%- itemName %> = new <%- modelName %>(req.body);
     <%- itemName %>.isValid(function (isValid) {
         if (!isValid) {
@@ -225,7 +226,7 @@ router.post('/', create);
 * @param {Function} next
 **/
 function destroy(req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>Model;
+    var <%- modelName %> = caminte.model('<%- modelName %>');
     <%- modelName %>.findById(req.params.<%- itemName %>_id, function (err, <%- itemName %>) {
         if (err) {
             res.status(400);
@@ -260,7 +261,7 @@ router.delete('/:<%- itemName %>_id', destroy);
 * @param {Function} next
 **/
 function truncate(req, res) {
-    var <%- modelName %> = req.app.models.<%- modelName %>Model;
+    var <%- modelName %> = caminte.model('<%- modelName %>');
     <%- modelName %>.destroyAll(function (err) {
         if (err) {
           res.status(400);
