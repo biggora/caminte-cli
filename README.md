@@ -31,6 +31,11 @@
 
 [Usage with Express.JS here](https://github.com/biggora/caminte-cli/wiki/Usage-with-express.js)
 
+### Usage with Swagger generated server
+
+[Usage with Swagger Server here](https://github.com/biggora/caminte-cli/wiki/Usage-with-Swagger-Server)
+
+
 ## Quick Start
 
  The quickest way to get started with caminte is to utilize the executable `caminte(1)` to create an models and routes as shown below:
