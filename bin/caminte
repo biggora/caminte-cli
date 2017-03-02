@@ -57,7 +57,7 @@ if (!program.init && !program.model
 }
 
 var ctr = fs.readFileSync(__dirname + '/../templates/controller.ejs', 'utf-8');
-var mdl = fs.readFileSync(__dirname + '/../templates/Model.ejs', 'utf-8');
+var mdl = fs.readFileSync(__dirname + '/../templates/model.ejs', 'utf-8');
 var ctrTemplate = _.template(ctr);
 var modelTemplate = _.template(mdl);
 
