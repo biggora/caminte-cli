@@ -740,7 +740,11 @@ function existsFile(path, cb) {
  * @param {Number} mode
  */
 function write(path, str, mode) {
-    fs.writeFile(path, str, {mode: mode || '0644'});
+    fs.writeFile(path, str, {mode: mode || '0644'}, function (err) {
+        if (err) {
+            throw err;
+        }
+    });
     console.log('   \x1b[36mcreate\x1b[0m : ' + path);
 }
 
