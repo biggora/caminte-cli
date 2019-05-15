@@ -96,7 +96,7 @@ if (program.init) {
                     if (model.indexes.length) {
                         var fidx = [], indexes = '         indexes: {\n';
                         model.indexes.forEach(function (index) {
-                            fidx.push('            ' + index.name + ': {\n'
+                            fidx.push('            \'' + index.name + '\': {\n'
                                 + '                columns: \'' + index.columns + '\'\n'
                                 + '            }');
                         });
