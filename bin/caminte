@@ -96,7 +96,7 @@ if (program.init) {
                     if (model.indexes.length) {
                         var fidx = [], indexes = '         indexes: {\n';
                         model.indexes.forEach(function (index) {
-                            fidx.push('            ' + index.name + ': {\n'
+                            fidx.push('            \'' + index.name + '\': {\n'
                                 + '                columns: \'' + index.columns + '\'\n'
                                 + '            }');
                         });
@@ -740,7 +740,7 @@ function existsFile(path, cb) {
  * @param {Number} mode
  */
 function write(path, str, mode) {
-    fs.writeFile(path, str, {mode: mode || '0644'});
+    fs.writeFileSync(path, str, {mode: mode || '0644'});
     console.log('   \x1b[36mcreate\x1b[0m : ' + path);
 }
 
